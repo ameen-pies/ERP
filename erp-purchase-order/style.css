@@ -1,0 +1,234 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+header {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+header h1 {
+    color: #2a4d8f;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #6b7280;
+    font-size: 1.1em;
+}
+
+main {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 30px;
+}
+
+.card h2 {
+    color: #2a4d8f;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.workflow-info {
+    background: #f3f4f6;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.workflow-info p {
+    margin: 0;
+    color: #4b5563;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+    transition: background 0.2s;
+}
+
+/* Forms */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.form-group input,
+.form-group select {
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+}
+
+/* Buttons */
+button, .btn-primary, .btn-secondary {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary, button[type="submit"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover, button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary, button[type="reset"] {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-secondary:hover, button[type="reset"]:hover {
+    background: #d1d5db;
+}
+
+button:not([type]) {
+    background: #2a4d8f;
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.9em;
+}
+
+button:not([type]):hover {
+    background: #1e3563;
+    transform: scale(1.05);
+}
+
+select[onchange] {
+    padding: 8px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s;
+}
+
+select[onchange]:hover {
+    border-color: #667eea;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    color: white;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    button, .btn-primary, .btn-secondary {
+        width: 100%;
+    }
+    
+    table {
+        font-size: 0.85em;
+    }
+    
+    th, td {
+        padding: 10px 8px;
+    }
+}
