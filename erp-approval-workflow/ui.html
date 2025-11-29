@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Workflow d'Approbation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        header {
+            background: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .status-connected {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-disconnected {
+            background: #ef4444;
+            color: white;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card h2 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .workflow-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: #f7fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .workflow-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1.5rem;
+        }
+
+        .approval-steps {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .approval-step {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .approval-step.current {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .approval-step.approved {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .approval-step.rejected {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .step-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .comments-section {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .comment {
+            border-left: 3px solid #3b82f6;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 0.25rem;
+        }
+
+        .comment-time {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+            cursor: pointer;
+        }
+
+        .notification.success {
+            background: #10b981;
+        }
+
+        .notification.error {
+            background: #ef4444;
+        }
+
+        .notification.info {
+            background: #3b82f6;
+        }
+
+        .notification.warning {
+            background: #f59e0b;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .action-form {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            border: 2px solid #e2e8f0;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 968px) {
+            .workflow-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .workflow-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🤝 Système de Workflow d'Approbation</h1>
+        <p>Validation multi-niveaux pour documents d'entreprise
+            <span id="connection-status" class="status-indicator status-disconnected">● Déconnecté</span>
+        </p>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>📋 Mes Approbations en Attente</h2>
+            
+            <div class="workflow-metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="pending-count">0</div>
+                    <div class="metric-label">En Attente</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="overdue-count">0</div>
+                    <div class="metric-label">En Retard</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="user-select">Voir en tant qu'utilisateur:</label>
+                <select id="user-select">
+                    <option value="user_1">Frank User (Initiateur)</option>
+                    <option value="tech_lead_1">Alice Tech (Réviseur Technique)</option>
+                    <option value="it_manager_1">Bob IT Manager (Chef de Département)</option>
+                    <option value="finance_1">Charlie Finance (Approbateur Financier)</option>
+                    <option value="purchasing_1">Diana Purchasing (Responsable Achats)</option>
+                    <option value="gm_1">Eve General Manager (Directeur Général)</option>
+                </select>
+            </div>
+            
+            <div class="table-container">
+                <table id="pending-approvals-table">
+                    <thead>
+                        <tr>
+                            <th>ID Workflow</th>
+                            <th>Document</th>
+                            <th>Initiateur</th>
+                            <th>Département</th>
+                            <th>Montant</th>
+                            <th>Étape Actuelle</th>
+                            <th>Échéance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="8" class="empty-state">Chargement...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card" id="workflow-detail" style="display: none;">
+            <h2>🔍 Détails du Workflow: <span id="workflow-title"></span></h2>
+            
+            <div class="workflow-container">
+                <div>
+                    <div class="progress-info">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span><strong>Progression Globale</strong></span>
+                            <span id="progress-percentage">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="approval-steps" id="approval-steps"></div>
+                    
+                    <div class="action-form" id="action-form" style="display: none;">
+                        <h3>📝 Prendre une Action</h3>
+                        <form id="workflow-action-form">
+                            <input type="hidden" id="current-workflow-id">
+                            <input type="hidden" id="current-step-id">
+                            
+                            <div class="form-group">
+                                <label for="action-select">Action *</label>
+                                <select id="action-select" required>
+                                    <option value="">Sélectionner une action...</option>
+                                    <option value="approve">✅ Approuver</option>
+                                    <option value="reject">❌ Rejeter</option>
+                                    <option value="request_changes">✏️ Demander des Modifications</option>
+                                    <option value="delegate">🔄 Déléguer</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="delegate-section" style="display: none;">
+                                <label for="delegate-to">Déléguer à</label>
+                                <select id="delegate-to">
+                                    <option value="">Sélectionner un utilisateur...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="action-comments">Commentaires</label>
+                                <textarea id="action-comments" rows="4" placeholder="Ajoutez vos commentaires..."></textarea>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="submit" class="btn btn-primary" id="submit-action-btn">💾 Soumettre</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideActionForm()">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="comments-section">
+                    <h3>💬 Discussion</h3>
+                    <div id="comments-thread" style="margin-bottom: 1rem;"></div>
+                    
+                    <div class="form-group">
+                        <label for="new-comment">Ajouter un Commentaire</label>
+                        <textarea id="new-comment" rows="3" placeholder="Votre message..."></textarea>
+                        <button onclick="addComment()" class="btn btn-primary btn-small" id="add-comment-btn" style="margin-top: 0.5rem; width: 100%;">
+                            💬 Envoyer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API_URL = "http://localhost:8001";
+        let CURRENT_USER_ID = "user_1";
+        let currentWorkflowId = null;
+        let ws = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: 'ℹ️',
+                warning: '⚠️'
+            };
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.2rem;">${icons[type] || 'ℹ️'}</span>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(400px)';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+            
+            notification.addEventListener('click', () => notification.remove());
+        }
+
+        function showLoading(message = 'Traitement en cours...') {
+            const overlay = document.createElement('div');
+            overlay.id = 'loading-overlay';
+            overlay.className = 'loading-overlay';
+            overlay.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>${message}</p>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.remove();
+        }
+
+        async function fetchWithErrorHandling(url, options = {}) {
+            try {
+                const response = await fetch(url, options);
+                
+                if (!response.ok) {
+                    let errorMessage = `HTTP ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.detail || errorData.message || errorMessage;
+                    } catch (e) {
+                        errorMessage = response.statusText || errorMessage;
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Erreur fetch:', error);
+                throw error;
+            }
+        }
+
+        function connectWebSocket() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                return;
+            }
+
+            try {
+                ws = new WebSocket('ws://localhost:8001/ws');
+                
+                ws.onopen = () => {
+                    console.log('✅ WebSocket connecté');
+                    reconnectAttempts = 0;
+                    document.getElementById('connection-status').textContent = '● Connecté';
+                    document.getElementById('connection-status').className = 'status-indicator status-connected';
+                };
+                
+                ws.onmessage = (event) => {
+                    try {
+                        const message = JSON.parse(event.data);
+                        console.log('📨 Reçu:', message);
+                        
+                        switch(message.type) {
+                            case 'workflow_created':
+                                showNotification('Nouveau workflow créé!', 'info');
+                                loadPendingApprovals();
+                                break;
+                            case 'workflow_updated':
+                                showNotification('Workflow mis à jour', 'info');
+                                loadPendingApprovals();
+                                if (currentWorkflowId === message.data.workflow_id) {
+                                    viewWorkflowDetail(currentWorkflowId);
+                                }
+                                break;
+                            case 'comment_added':
+                                if (currentWorkflowId === message.workflow_id) {
+                                    loadComments(currentWorkflowId);
+                                }
+                                break;
+                        }
+                    } catch (error) {
+                        console.error('Erreur analyse message WebSocket:', error);
+                    }
+                };
+                
+                ws.onclose = () => {
+                    console.log('❌ WebSocket déconnecté');
+                    document.getElementById('connection-status').textContent = '● Déconnecté';
+                    document.getElementById('connection-status').className = 'status-indicator status-disconnected';
+                    
+                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 10000);
+                        reconnectAttempts++;
+                        console.log(`🔄 Reconnexion dans ${delay}ms (tentative ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+                        setTimeout(connectWebSocket, delay);
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    console.error('Erreur WebSocket:', error);
+                };
+            } catch (error) {
+                console.error('Échec connexion WebSocket:', error);
+            }
+        }
+
+        function handleUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const workflowId = urlParams.get('workflow');
+            
+            if (workflowId) {
+                console.log('Chargement workflow depuis URL:', workflowId);
+                setTimeout(() => viewWorkflowDetail(workflowId), 500);
+            }
+        }
+
+        document.getElementById('user-select').addEventListener('change', function() {
+            CURRENT_USER_ID = this.value;
+            loadPendingApprovals();
+            showNotification('Contexte utilisateur changé', 'info');
+        });
+
+        document.getElementById('action-select').addEventListener('change', function() {
+            const delegateSection = document.getElementById('delegate-section');
+            delegateSection.style.display = this.value === 'delegate' ? 'block' : 'none';
+        });
+
+        async function loadPendingApprovals() {
+            try {
+                const workflows = await fetchWithErrorHandling(`${API_URL}/workflows/user/${CURRENT_USER_ID}/pending`);
+
+                const tbody = document.querySelector("#pending-approvals-table tbody");
+                tbody.innerHTML = "";
+
+                let pendingCount = 0;
+                let overdueCount = 0;
+
+                workflows.forEach(workflow => {
+                    const currentStep = workflow.steps.find(step => 
+                        step.status === 'in_progress' || step.status === 'pending'
+                    );
+                    
+                    const isAssignedToMe = currentStep && currentStep.assigned_to === CURRENT_USER_ID;
+                    
+                    if (isAssignedToMe) {
+                        pendingCount++;
+                        
+                        const deadline = new Date(currentStep.deadline);
+                        const today = new Date();
+                        if (deadline < today) overdueCount++;
+
+                        const deadlineColor = deadline < today ? '#ef4444' : '#6b7280';
+                        
+                        const roleTranslations = {
+                            'technical_reviewer': 'Réviseur Technique',
+                            'department_manager': 'Chef de Département',
+                            'financial_approver': 'Approbateur Financier',
+                            'purchasing_manager': 'Responsable Achats',
+                            'general_manager': 'Directeur Général'
+                        };
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><strong>${workflow.workflow_id}</strong></td>
+                                <td>${workflow.document_title}</td>
+                                <td>${workflow.initiator_name}</td>
+                                <td>${workflow.department}</td>
+                                <td>${workflow.total_amount ? workflow.total_amount.toFixed(2) + ' TND' : 'N/A'}</td>
+                                <td>${roleTranslations[currentStep.role] || currentStep.role}</td>
+                                <td style="color: ${deadlineColor}">
+                                    ${deadline.toLocaleDateString('fr-FR')}
+                                </td>
+                                <td>
+                                    <button onclick="viewWorkflowDetail('${workflow.workflow_id}')" class="btn btn-primary btn-small">
+                                        👁️ Voir
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                document.getElementById('pending-count').textContent = pendingCount;
+                document.getElementById('overdue-count').textContent = overdueCount;
+
+                if (pendingCount === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                🎉 Aucune approbation en attente! Vous êtes à jour.
+                            </td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error("Erreur chargement approbations:", error);
+                showNotification(`Erreur chargement: ${error.message}`, "error");
+            }
+        }
+
+        async function viewWorkflowDetail(workflowId) {
+            try {
+                showLoading('Chargement du workflow...');
+                
+                const workflow = await fetchWithErrorHandling(`${API_URL}/workflows/${workflowId}`);
+
+                currentWorkflowId = workflowId;
+                document.getElementById('workflow-title').textContent = workflow.document_title;
+                document.getElementById('current-workflow-id').value = workflowId;
+                
+                try {
+                    const progress = await fetchWithErrorHandling(`${API_URL}/workflows/${workflowId}/progress`);
+                    document.getElementById('progress-percentage').textContent = 
+                        `${Math.round(progress.progress_percentage)}%`;
+                    document.getElementById('progress-fill').style.width = 
+                        `${progress.progress_percentage}%`;
+                } catch (progressError) {
+                    console.warn('Impossible de charger la progression:', progressError);
+                }
+
+                renderApprovalSteps(workflow);
+                await loadComments(workflowId);
+                
+                document.getElementById('workflow-detail').style.display = 'block';
+                document.getElementById('workflow-detail').scrollIntoView({ behavior: 'smooth' });
+
+                hideLoading();
+            } catch (error) {
+                hideLoading();
+                console.error("Erreur chargement workflow:", error);
+                showNotification(`Erreur chargement workflow: ${error.message}`, "error");
+            }
+        }
+
+        function renderApprovalSteps(workflow) {
+            const container = document.getElementById('approval-steps');
+            container.innerHTML = '';
+
+            const roleTranslations = {
+                'technical_reviewer': 'Réviseur Technique',
+                'department_manager': 'Chef de Département',
+                'financial_approver': 'Approbateur Financier',
+                'purchasing_manager': 'Responsable Achats',
+                'general_manager': 'Directeur Général'
+            };
+
+            workflow.steps.forEach((step, index) => {
+                const stepClass = getStepClass(step);
+                const statusText = getStatusText(step.status);
+                const statusColor = getStatusColor(step.status);
+                
+                const isCurrentStep = step.status === 'in_progress';
+                const isAssignedToMe = step.assigned_to === CURRENT_USER_ID && isCurrentStep;
+
+                const stepDiv = document.createElement('div');
+                stepDiv.className = `approval-step ${stepClass}`;
+                stepDiv.innerHTML = `
+                    <div class="step-status" style="background: ${statusColor}">
+                        ${statusText}
+                    </div>
+                    <h4>Étape ${index + 1}: ${roleTranslations[step.role] || step.role}</h4>
+                    <p><strong>Assigné à:</strong> ${step.assigned_name}</p>
+                    ${step.deadline ? `<p><strong>Échéance:</strong> ${new Date(step.deadline).toLocaleDateString('fr-FR')}</p>` : ''}
+                    ${step.comments ? `<p><strong>Commentaires:</strong> ${step.comments}</p>` : ''}
+                    ${step.action_date ? `<p><strong>Action effectuée:</strong> ${new Date(step.action_date).toLocaleString('fr-FR')}</p>` : ''}
+                    
+                    ${isAssignedToMe ? `
+                        <button onclick="showActionForm('${workflow.workflow_id}', '${step.step_id}')" 
+                                class="btn btn-primary btn-small" style="margin-top: 1rem;">
+                            📝 Prendre Action
+                        </button>
+                    ` : ''}
+                `;
+                container.appendChild(stepDiv);
+            });
+        }
+
+        function getStepClass(step) {
+            if (step.status === 'approved') return 'approved';
+            if (step.status === 'rejected') return 'rejected';
+            if (step.status === 'in_progress') return 'current';
+            return '';
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'En Attente',
+                'in_progress': 'En Cours',
+                'approved': 'Approuvé',
+                'rejected': 'Rejeté',
+                'changes_requested': 'Modifications Demandées'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getStatusColor(status) {
+            const colorMap = {
+                'pending': '#6b7280',
+                'in_progress': '#3b82f6',
+                'approved': '#10b981',
+                'rejected': '#ef4444',
+                'changes_requested': '#f59e0b'
+            };
+            return colorMap[status] || '#6b7280';
+        }
+
+        function showActionForm(workflowId, stepId) {
+            document.getElementById('current-workflow-id').value = workflowId;
+            document.getElementById('current-step-id').value = stepId;
+            document.getElementById('action-form').style.display = 'block';
+            document.getElementById('action-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideActionForm() {
+            document.getElementById('action-form').style.display = 'none';
+            document.getElementById('workflow-action-form').reset();
+        }
+
+        document.getElementById('workflow-action-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const workflowId = document.getElementById('current-workflow-id').value;
+            const stepId = document.getElementById('current-step-id').value;
+            const action = document.getElementById('action-select').value;
+            const comments = document.getElementById('action-comments').value;
+            const delegateTo = document.getElementById('delegate-to').value;
+            
+            if (!action) {
+                showNotification('Veuillez sélectionner une action', 'warning');
+                return;
+            }
+            
+            try {
+                showLoading('Traitement de votre action...');
+                
+                const payload = {
+                    workflow_id: workflowId,
+                    step_id: stepId,
+                    action: action,
+                    comments: comments
+                };
+                
+                if (action === 'delegate' && delegateTo) {
+                    payload.delegate_to = delegateTo;
+                }
+                
+                await fetchWithErrorHandling(`${API_URL}/workflows/${workflowId}/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                hideLoading();
+                showNotification('Action effectuée avec succès!', 'success');
+                hideActionForm();
+                await loadPendingApprovals();
+                await viewWorkflowDetail(workflowId);
+                
+            } catch (error) {
+                hideLoading();
+                showNotification(`Erreur: ${error.message}`, 'error');
+            }
+        });
+
+        async function loadComments(workflowId) {
+            try {
+                const comments = await fetchWithErrorHandling(`${API_URL}/workflows/${workflowId}/comments`);
+                const container = document.getElementById('comments-thread');
+                
+                if (comments.length === 0) {
+                    container.innerHTML = '<p style="color: #6b7280; text-align: center;">Aucun commentaire pour le moment</p>';
+                    return;
+                }
+                
+                container.innerHTML = comments.map(comment => `
+                    <div class="comment">
+                        <div class="comment-author">${comment.author_name}</div>
+                        <div class="comment-time">${new Date(comment.timestamp).toLocaleString('fr-FR')}</div>
+                        <div>${comment.message}</div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Erreur chargement commentaires:', error);
+            }
+        }
+
+        async function addComment() {
+            const message = document.getElementById('new-comment').value.trim();
+            if (!message) {
+                showNotification('Veuillez entrer un commentaire', 'warning');
+                return;
+            }
+            
+            if (!currentWorkflowId) {
+                showNotification('Aucun workflow sélectionné', 'error');
+                return;
+            }
+            
+            try {
+                // Get user info from API
+                const users = await fetchWithErrorHandling(`${API_URL}/users`);
+                const userName = users[CURRENT_USER_ID]?.name || 'Utilisateur Inconnu';
+                
+                await fetchWithErrorHandling(`${API_URL}/workflows/${currentWorkflowId}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        workflow_id: currentWorkflowId,
+                        author: CURRENT_USER_ID,
+                        author_name: userName,
+                        message: message
+                    })
+                });
+                
+                document.getElementById('new-comment').value = '';
+                showNotification('Commentaire ajouté', 'success');
+                await loadComments(currentWorkflowId);
+                
+            } catch (error) {
+                showNotification(`Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadDelegateUsers() {
+            try {
+                const users = await fetchWithErrorHandling(`${API_URL}/users`);
+                const select = document.getElementById('delegate-to');
+                select.innerHTML = '<option value="">Sélectionner un utilisateur...</option>';
+                
+                for (const [userId, userData] of Object.entries(users)) {
+                    if (userId !== CURRENT_USER_ID) {
+                        select.innerHTML += `<option value="${userId}">${userData.name}</option>`;
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur chargement utilisateurs:', error);
+            }
+        }
+
+        window.addEventListener('load', function() {
+            console.log('🚀 Application chargée');
+            connectWebSocket();
+            loadPendingApprovals();
+            loadDelegateUsers();
+            handleUrlParameters();
+        });
+    </script>
+</body>
+</html>
