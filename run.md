@@ -6,3 +6,5 @@ python main.py
 
 cd "erp - 4"
 python main.py
+
+test item
