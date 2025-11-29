@@ -1,8 +1,8 @@
-cd "erp_full_project"
+cd "ERP"
 python runserver.py
 
-cd "erp - 3"
+cd "erp-purchase-order"
 python main.py
 
-cd "erp - 4"
+cd "erp-approval-workflow"
 python main.py
