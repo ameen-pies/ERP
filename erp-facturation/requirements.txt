@@ -1,0 +1,31 @@
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# File Upload
+python-multipart==0.0.6
+
+# Email
+aiosmtplib==3.0.1
+requests==2.31.0
+
+# FastAPI & Web
+python-multipart==0.0.6
+requests==2.31.0
+
+# Database
+pymongo==4.6.0
+python-dotenv==1.0.0
+
+# Data validation
+pydantic==2.5.0
+
+# Streamlit UI
+streamlit==1.28.2
+
+# Logging
+colorlog==6.8.0
+easyocr
+opencv-python-headless
+pillow
+numpy
