@@ -21,9 +21,9 @@ except ConnectionFailure as e:
 # Get database
 db = client[MONGO_DB_NAME]
 
-# Collections
+# Collections - FIXED: Use correct collection name
 pr_collection = db["purchase_requests"]
-po_collection = db["POs"]
+po_collection = db["bons_commande"]  # ✅ CHANGED FROM "POs" to "bons_commande"
 facture_collection = db["factures"]
 
 # Create indexes for better performance
@@ -34,7 +34,7 @@ try:
     pr_collection.create_index("demandeur")
     pr_collection.create_index("date_creation")
     
-    # PO indexes
+    # PO indexes - FIXED: Use correct field name
     po_collection.create_index("purchase_order_id", unique=True)
     po_collection.create_index("linked_pr_id")
     po_collection.create_index("status")

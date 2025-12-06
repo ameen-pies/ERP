@@ -1,6 +1,7 @@
 import logging
 from typing import Dict
 from difflib import SequenceMatcher
+import re
 
 import requests
 import os
@@ -14,19 +15,188 @@ logger = logging.getLogger(__name__)
 class FactureValidator:
     """Validateur pour comparer facture vs Purchase Order"""
     
+    # ✅ CONFIGURABLE TOLERANCES - Real business logic
+    TOLERANCE_AMOUNT_PERCENT = 2.0  # 2% tolerance for amounts (realistic for rounding)
+    TOLERANCE_AMOUNT_ABSOLUTE = 0.05  # 0.05 TND absolute tolerance (5 millimes)
+    TOLERANCE_QUANTITY_PERCENT = 5.0  # 5% tolerance for quantities
+    TOLERANCE_STRING_SIMILARITY = 0.85  # 85% similarity for text fields
+    
     def __init__(self, po_collection):
         self.po_collection = po_collection
     
-
+    def _normalize_string(self, text: str) -> str:
+        """
+        Normalize string for comparison:
+        - Remove extra whitespace
+        - Convert to lowercase
+        - Remove special characters
+        - Remove accents
+        """
+        if not text or not isinstance(text, str):
+            return ""
+        
+        # Convert to lowercase
+        text = text.lower()
+        
+        # Remove extra whitespace
+        text = ' '.join(text.split())
+        
+        # Remove common punctuation that doesn't affect meaning
+        text = re.sub(r'[.,;:!?\-_/\\()\[\]{}]', ' ', text)
+        
+        # Remove extra spaces again
+        text = ' '.join(text.split())
+        
+        return text.strip()
+    
+    def _compare_amounts(self, po_amount: float, facture_amount: float, field_name: str) -> Dict:
+        """
+        Smart amount comparison with proper tolerance
+        Returns: {"match": bool, "difference": float, "percentage": float, "reason": str}
+        """
+        try:
+            po_amt = float(po_amount) if po_amount is not None else 0.0
+            fact_amt = float(facture_amount) if facture_amount is not None else 0.0
+            
+            # Calculate absolute difference
+            diff = abs(po_amt - fact_amt)
+            
+            # Calculate percentage difference
+            if po_amt > 0:
+                pct_diff = (diff / po_amt) * 100
+            else:
+                pct_diff = 100.0 if fact_amt > 0 else 0.0
+            
+            # Check if within tolerance
+            within_absolute = diff <= self.TOLERANCE_AMOUNT_ABSOLUTE
+            within_percentage = pct_diff <= self.TOLERANCE_AMOUNT_PERCENT
+            
+            is_match = within_absolute or within_percentage
+            
+            reason = ""
+            if not is_match:
+                reason = f"Différence: {diff:.3f} ({pct_diff:.2f}%) - Tolérance: ±{self.TOLERANCE_AMOUNT_PERCENT}% ou ±{self.TOLERANCE_AMOUNT_ABSOLUTE} TND"
+            else:
+                reason = f"Différence minime acceptable: {diff:.3f} ({pct_diff:.2f}%)"
+            
+            return {
+                "match": is_match,
+                "difference": diff,
+                "percentage": pct_diff,
+                "reason": reason,
+                "po_value": po_amt,
+                "facture_value": fact_amt
+            }
+            
+        except (ValueError, TypeError) as e:
+            logger.warning(f"Amount comparison error for {field_name}: {e}")
+            return {
+                "match": False,
+                "difference": 0,
+                "percentage": 0,
+                "reason": "Valeurs invalides pour la comparaison",
+                "po_value": po_amount,
+                "facture_value": facture_amount
+            }
+    
+    def _compare_quantities(self, po_qty: int, facture_qty: int) -> Dict:
+        """
+        Smart quantity comparison with tolerance
+        """
+        try:
+            po_q = int(po_qty) if po_qty is not None else 0
+            fact_q = int(facture_qty) if facture_qty is not None else 0
+            
+            diff = abs(po_q - fact_q)
+            
+            if po_q > 0:
+                pct_diff = (diff / po_q) * 100
+            else:
+                pct_diff = 100.0 if fact_q > 0 else 0.0
+            
+            is_match = pct_diff <= self.TOLERANCE_QUANTITY_PERCENT
+            
+            reason = ""
+            if not is_match:
+                reason = f"Différence: {diff} unités ({pct_diff:.1f}%) - Tolérance: ±{self.TOLERANCE_QUANTITY_PERCENT}%"
+            else:
+                reason = f"Différence acceptable: {diff} unités ({pct_diff:.1f}%)"
+            
+            return {
+                "match": is_match,
+                "difference": diff,
+                "percentage": pct_diff,
+                "reason": reason,
+                "po_value": po_q,
+                "facture_value": fact_q
+            }
+            
+        except (ValueError, TypeError) as e:
+            logger.warning(f"Quantity comparison error: {e}")
+            return {
+                "match": False,
+                "difference": 0,
+                "percentage": 0,
+                "reason": "Valeurs invalides",
+                "po_value": po_qty,
+                "facture_value": facture_qty
+            }
+    
+    def _compare_strings(self, po_text: str, facture_text: str, field_name: str) -> Dict:
+        """
+        Smart string comparison with normalization and fuzzy matching
+        """
+        # Normalize both strings
+        po_normalized = self._normalize_string(po_text)
+        fact_normalized = self._normalize_string(facture_text)
+        
+        # If both empty, consider match
+        if not po_normalized and not fact_normalized:
+            return {
+                "match": True,
+                "similarity": 1.0,
+                "reason": "Champs vides"
+            }
+        
+        # If one is empty, not a match
+        if not po_normalized or not fact_normalized:
+            return {
+                "match": False,
+                "similarity": 0.0,
+                "reason": "Un champ est vide",
+                "po_value": po_text,
+                "facture_value": facture_text
+            }
+        
+        # Calculate similarity
+        similarity = SequenceMatcher(None, po_normalized, fact_normalized).ratio()
+        
+        is_match = similarity >= self.TOLERANCE_STRING_SIMILARITY
+        
+        reason = ""
+        if is_match:
+            reason = f"Similarité: {similarity*100:.1f}%"
+        else:
+            reason = f"Similarité insuffisante: {similarity*100:.1f}% (minimum: {self.TOLERANCE_STRING_SIMILARITY*100:.0f}%)"
+        
+        return {
+            "match": is_match,
+            "similarity": similarity,
+            "reason": reason,
+            "po_value": po_text,
+            "facture_value": facture_text,
+            "po_normalized": po_normalized,
+            "fact_normalized": fact_normalized
+        }
+    
     def _call_llm_compare(self, facture_data: Dict, po: Dict) -> Dict:
         """
-            RapidAPI endpoint to compare facture_ocr output vs PO
-            Returns a dict with optional keys:
-            - 'discrepancies': list of {field, po_value, facture_value, severity, reason}
-            - 'action_suggerée': one of 'accepter', 'reviser', 'rejeter'
-            - 'confidence': float (0-100)
+        RapidAPI endpoint to compare facture_ocr output vs PO
+        Returns a dict with optional keys:
+        - 'discrepancies': list of {field, po_value, facture_value, severity, reason}
+        - 'action_suggérée': one of 'accepter', 'reviser', 'rejeter'
+        - 'confidence': float (0-100)
         """
-
         RAPIDAPI_URL = os.getenv("RAPIDAPI_URL")
         RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
         RAPIDAPI_HOST = os.getenv("RAPIDAPI_HOST", "")
@@ -35,16 +205,15 @@ class FactureValidator:
             logger.debug("⚠️ RapidAPI config missing, skipping LLM compare.")
             return {}
 
-        # Build a strict instruction: return ONLY a JSON object with the schema above.
         system_prompt = (
             "You are an automated invoice vs purchase-order comparer. "
             "Given a PO JSON and an Invoice (facture) JSON, return ONLY a single JSON object "
-            "with these keys: 'discrepancies' (array), 'action_suggerée' (accepter, reviser, rejeter), "
+            "with these keys: 'discrepancies' (array), 'action_suggérée' (accepter, reviser, rejeter), "
             "and 'confidence' (0-100). Each discrepancy must contain: field, po_value, facture_value, severity (error|warning|info), reason. "
+            "IMPORTANT: Use realistic tolerances - amounts within 2% are acceptable, text with 85%+ similarity is acceptable. "
             "Do NOT include any extra text outside the JSON object."
         )
 
-        # Provide PO and facture bodies; keep them compact
         payload_messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": (
@@ -75,12 +244,10 @@ class FactureValidator:
             logger.warning(f"⚠️ LLM compare HTTP {resp.status_code}: {resp.text[:500]}")
             return {}
 
-        # Robust parsing: try common JSON shapes, or extract JSON blob from text
         try:
             data = resp.json()
         except Exception:
             raw = resp.text
-            # try to find JSON substring
             m = _re_for_json.search(r'(\{[\s\S]*\})', raw)
             if m:
                 try:
@@ -90,9 +257,7 @@ class FactureValidator:
                     return {}
             return {}
 
-        # If valid JSON, try to extract the relevant object
         try:
-            # OpenAI-like responses: choices -> message -> content
             if isinstance(data, dict):
                 choices = data.get("choices")
                 if choices and isinstance(choices, list):
@@ -115,7 +280,6 @@ class FactureValidator:
                         except Exception:
                             pass
 
-                # Other shapes: top-level 'output'/'result' fields
                 for k in ("output", "response", "result", "data"):
                     if k in data:
                         val = data[k]
@@ -133,14 +297,12 @@ class FactureValidator:
                             except Exception:
                                 pass
 
-                # If top-level dictionary already contains expected keys, return it
-                if any(k in data for k in ("discrepancies", "action_suggerée", "confidence")):
+                if any(k in data for k in ("discrepancies", "action_suggérée", "confidence")):
                     return data
 
         except Exception as e:
             logger.debug(f"🔎 Error interpreting LLM compare response: {e}")
 
-        # Final attempt: dump and search for JSON blob
         try:
             text = json.dumps(data)
             m = _re_for_json.search(r'(\{[\s\S]*\})', text)
@@ -155,18 +317,16 @@ class FactureValidator:
         logger.debug("⚠️ LLM compare returned no parseable JSON.")
         return {}
 
-
     def validate_against_po(self, facture_data: Dict, po_id: str) -> Dict:
         """
-            Compare une facture OCR (facture_data) avec un Bon de Commande (PO) stocké en base.
-            Combine : 
-                - Vérifications internes (Règles métier)
-                - Vérifications assistées par LLM
+        Compare une facture OCR (facture_data) avec un Bon de Commande (PO) stocké en base.
+        Combine: 
+            - Vérifications internes (Règles métier AMÉLIORÉES)
+            - Vérifications assistées par LLM
         """
-        print("\n================ DEBUG FACTURE DATA ================")
-        for k, v in facture_data.items():
-            print(f"{k}: {v}")
-        print("====================================================\n")
+        logger.info(f"\n{'='*60}")
+        logger.info(f"🔍 VALIDATION: Facture vs PO {po_id}")
+        logger.info(f"{'='*60}")
 
         # RÉCUPÉRATION DU PO
         po = self.po_collection.find_one({"purchase_order_id": po_id})
@@ -191,198 +351,191 @@ class FactureValidator:
             "errors": [],
         }
 
-        # Petit utilitaire interne pour ajouter un mismatch proprement
-        def _mismatch(field, po_val, fact_val, severity, reason=None):
-            result["mismatches"].append({
-                "field": field,
-                "po_value": po_val,
-                "facture_value": fact_val,
-                "severity": severity,
-                "reason": reason or ""
-            })
-            if severity == "error":
-                result["errors"].append(f"❌ {field}: PO='{po_val}' vs Facture='{fact_val}'. {reason or ''}")
-                result["is_valid"] = False
-            elif severity == "warning":
-                result["warnings"].append(f"⚠️ {field}: PO='{po_val}' vs Facture='{fact_val}'. {reason or ''}")
-            else:
-                result["warnings"].append(f"ℹ️ {field}: {reason or ''}")
+        matched_count = 0
+        total_checks = 0
 
-        # 1) TYPE D’ACHAT
-        po_type = (po.get("type_achat") or "").strip().lower()
-        fc_type = (facture_data.get("type_achat") or "").strip().lower()
-        if po_type and fc_type:
-            if po_type == fc_type:
-                result["matched_fields"].append("type_achat")
+        # Helper to add mismatches
+        def _add_mismatch(field, comparison_result, severity=None):
+            """Add a mismatch based on comparison result"""
+            if comparison_result.get("match"):
+                result["matched_fields"].append(field)
+                logger.info(f"  ✅ {field}: MATCH")
+                return True
             else:
-                _mismatch("Type d'achat", po_type, fc_type, "error")
+                # Determine severity if not provided
+                if severity is None:
+                    # Default severity based on percentage difference
+                    pct = comparison_result.get("percentage", 0)
+                    if pct > 15:
+                        severity = "error"
+                    elif pct > 5:
+                        severity = "warning"
+                    else:
+                        severity = "info"
+                
+                mismatch = {
+                    "field": field,
+                    "po_value": comparison_result.get("po_value"),
+                    "facture_value": comparison_result.get("facture_value"),
+                    "severity": severity,
+                    "reason": comparison_result.get("reason", "")
+                }
+                
+                if "difference" in comparison_result:
+                    mismatch["difference"] = f"{comparison_result['difference']:.3f}"
+                
+                result["mismatches"].append(mismatch)
+                
+                if severity == "error":
+                    result["errors"].append(f"❌ {field}: {comparison_result.get('reason')}")
+                    result["is_valid"] = False
+                    logger.warning(f"  ❌ {field}: ERROR - {comparison_result.get('reason')}")
+                elif severity == "warning":
+                    result["warnings"].append(f"⚠️ {field}: {comparison_result.get('reason')}")
+                    logger.info(f"  ⚠️ {field}: WARNING - {comparison_result.get('reason')}")
+                else:
+                    result["warnings"].append(f"ℹ️ {field}: {comparison_result.get('reason')}")
+                    logger.info(f"  ℹ️ {field}: INFO - {comparison_result.get('reason')}")
+                
+                return False
+
+        # 1) TYPE D'ACHAT
+        total_checks += 1
+        po_type = (po.get("type_achat") or "").strip()
+        fc_type = (facture_data.get("type_achat") or "").strip()
+        type_comparison = self._compare_strings(po_type, fc_type, "Type d'achat")
+        if _add_mismatch("Type d'achat", type_comparison):
+            matched_count += 1
 
         # 2) QUANTITÉ
-        try:
-            po_qty = float(po.get("quantite")) if po.get("quantite") is not None else None
-            fc_qty = float(facture_data.get("quantite")) if facture_data.get("quantite") is not None else None
-
-            if po_qty is not None and fc_qty is not None:
-                if po_qty == fc_qty:
-                    result["matched_fields"].append("quantite")
-                else:
-                    diff = abs(po_qty - fc_qty)
-                    pct = diff / po_qty * 100 if po_qty else 100
-                    sev = "error" if pct > 10 else "warning"
-                    _mismatch("Quantité", po_qty, fc_qty, sev, f"Différence : {diff} ({pct:.1f}%)")
-        except Exception:
-            result["warnings"].append("⚠️ Quantités non comparables (donnée invalide).")
+        total_checks += 1
+        po_qty = po.get("quantite")
+        fc_qty = facture_data.get("quantite")
+        if po_qty is not None and fc_qty is not None:
+            qty_comparison = self._compare_quantities(po_qty, fc_qty)
+            if _add_mismatch("Quantité", qty_comparison):
+                matched_count += 1
+        else:
+            logger.warning("  ⚠️ Quantités non disponibles pour comparaison")
 
         # 3) UNITÉ
-        po_u = (po.get("unite") or "").lower()
-        fc_u = (facture_data.get("unite") or "").lower()
-        try:
-            if po_u and fc_u:
-                if po_u == fc_u or self._calculate_similarity(po_u, fc_u) > 0.6:
-                    result["matched_fields"].append("unite")
-                else:
-                    _mismatch("Unité", po_u, fc_u, "warning")
-        except Exception:
-            _mismatch("Unité", po_u, fc_u, "warning")
+        total_checks += 1
+        po_u = po.get("unite") or ""
+        fc_u = facture_data.get("unite") or ""
+        unit_comparison = self._compare_strings(po_u, fc_u, "Unité")
+        if _add_mismatch("Unité", unit_comparison, severity="info"):  # Units are less critical
+            matched_count += 1
 
-        # 4) MONTANT (prix estimé vs montant TTC)
-        try:
-            po_amount = float(po.get("prix_estime") or 0)
-            fc_amount = float(facture_data.get("montant_ttc") or 0)
+        # 4) MONTANT TTC (Most important!)
+        total_checks += 1
+        po_amount = po.get("prix_estime") or po.get("montant_ttc")
+        fc_amount = facture_data.get("montant_ttc")
+        if po_amount is not None and fc_amount is not None:
+            amount_comparison = self._compare_amounts(po_amount, fc_amount, "Montant TTC")
+            if _add_mismatch("Montant TTC", amount_comparison):
+                matched_count += 1
+        else:
+            logger.warning("  ⚠️ Montants non disponibles pour comparaison")
 
-            if po_amount and fc_amount:
-                diff = abs(po_amount - fc_amount)
-                pct = diff / po_amount * 100
-                if diff <= po_amount * 0.10:
-                    result["matched_fields"].append("montant")
-                else:
-                    severity = "error" if pct > 15 else "warning"
-                    _mismatch("Montant", po_amount, fc_amount, severity, f"Différence {pct:.1f}%")
-        except Exception:
-            result["warnings"].append("⚠️ Montants non comparables (format incorrect).")
+        # 5) MONTANT HT
+        total_checks += 1
+        po_ht = po.get("montant_ht")
+        fc_ht = facture_data.get("montant_ht")
+        if po_ht is not None and fc_ht is not None:
+            ht_comparison = self._compare_amounts(po_ht, fc_ht, "Montant HT")
+            if _add_mismatch("Montant HT", ht_comparison):
+                matched_count += 1
 
-        # 5) DATE DE FACTURE vs DATE DU PO (si fournie dans les deux)
-        po_date = po.get("date_facture") or po.get("date") or ""
-        fc_date = facture_data.get("date_facture") or ""
+        # 6) FOURNISSEUR
+        total_checks += 1
+        po_fournisseur = ""
+        if isinstance(po.get("fournisseur"), dict):
+            po_fournisseur = po["fournisseur"].get("nom", "")
+        elif isinstance(po.get("fournisseur"), str):
+            po_fournisseur = po["fournisseur"]
+        
+        fc_fournisseur = facture_data.get("fournisseur_nom", "")
+        
+        if po_fournisseur and fc_fournisseur:
+            fournisseur_comparison = self._compare_strings(po_fournisseur, fc_fournisseur, "Fournisseur")
+            if _add_mismatch("Fournisseur", fournisseur_comparison):
+                matched_count += 1
 
-        if po_date and fc_date:
-            if str(po_date).strip() == str(fc_date).strip():
-                result["matched_fields"].append("date_facture")
-            else:
-                _mismatch("Date de facture", po_date, fc_date, "warning")
-
-        # 6) CENTRE DE COÛT
+        # 7) CENTRE DE COÛT
+        total_checks += 1
         po_cc = po.get("centre_cout") or ""
         fc_cc = facture_data.get("centre_cout") or ""
         if po_cc and fc_cc:
-            if po_cc == fc_cc:
-                result["matched_fields"].append("centre_cout")
-            else:
-                _mismatch("Centre de coût", po_cc, fc_cc, "warning")
+            cc_comparison = self._compare_strings(po_cc, fc_cc, "Centre de coût")
+            if _add_mismatch("Centre de coût", cc_comparison, severity="warning"):
+                matched_count += 1
 
-        # 7) DÉLAI SOUHAITÉ
-        po_delai = po.get("delai_souhaite") or ""
-        fc_delai = facture_data.get("delai_souhaite") or ""
-        if po_delai and fc_delai:
-            if po_delai == fc_delai:
-                result["matched_fields"].append("delai_souhaite")
-
-        # 8) DATE DE LIVRAISON
-        po_dl = po.get("date_livraison_souhaitee") or po.get("date livraison souhaitée") or ""
-        fc_dl = facture_data.get("date_livraison_souhaite") or ""
-        if po_dl and fc_dl:
-            if po_dl == fc_dl:
-                result["matched_fields"].append("date_livraison")
-
-        # 9) SPÉCIFICATIONS TECHNIQUES
-        po_specs = (po.get("specifications_techniques") or "").lower()
-        fc_specs = (facture_data.get("specifications_techniques") or "").lower()
-
+        # 8) SPÉCIFICATIONS TECHNIQUES
+        total_checks += 1
+        po_specs = po.get("specifications_techniques") or ""
+        fc_specs = facture_data.get("specifications_techniques") or ""
         if po_specs and fc_specs:
-            sim = self._calculate_similarity(po_specs, fc_specs)
-            if sim > 0.80:
-                result["matched_fields"].append("specifications_techniques")
-            else:
-                result["warnings"].append("⚠️ Les spécifications techniques semblent différentes.")
+            specs_comparison = self._compare_strings(po_specs, fc_specs, "Spécifications")
+            if _add_mismatch("Spécifications", specs_comparison, severity="info"):
+                matched_count += 1
 
-        # 10) PIÈCES / ARTICLES (si PO contient une liste d’items)
-        if "items" in po and isinstance(po["items"], list):
-            po_items = {str(i.get("designation", "")).lower() for i in po["items"]}
-            fc_items = {str(facture_data.get("details_demande", "")).lower()}
-            if po_items & fc_items:
-                result["matched_fields"].append("articles")
-            else:
-                result["warnings"].append("⚠️ Les articles facturés ne correspondent pas clairement au PO.")
+        # SCORE DE CONFIANCE
+        if total_checks > 0:
+            base_score = (matched_count / total_checks) * 100
+            result["confidence_score"] = round(base_score, 1)
+        else:
+            result["confidence_score"] = 0.0
 
-        # INTÉGRATION DU LLM
+        logger.info(f"\n📊 RÉSULTAT:")
+        logger.info(f"  - Champs validés: {matched_count}/{total_checks}")
+        logger.info(f"  - Score: {result['confidence_score']}%")
+        logger.info(f"  - Erreurs: {len(result['errors'])}")
+        logger.info(f"  - Avertissements: {len(result['warnings'])}")
+
+        # INTÉGRATION DU LLM (Optional enhancement)
         try:
             llm = self._call_llm_compare(facture_data, po)
             if llm:
-                result["llm_insights"] = llm
-                print("\n--- LLM RAW OUTPUT ---")
-                print(llm_insights)
-                print("----------------------\n")
+                result["llm"] = llm
+                logger.info(f"\n🤖 LLM Analysis:")
+                logger.info(f"  - Action suggérée: {llm.get('action_suggérée', 'N/A')}")
+                logger.info(f"  - Confiance LLM: {llm.get('confidence', 'N/A')}%")
 
-                # Discrepancies
-                for d in llm.get("discrepancies", []):
-                    _mismatch(
-                        d.get("field", "inconnu"),
-                        d.get("po_value"),
-                        d.get("facture_value"),
-                        d.get("severity", "info"),
-                        d.get("reason")
-                    )
-
-                # Actions suggérées
-                if llm.get("suggested_action") == "reject":
-                    result["errors"].append("❌ LLM recommande de rejeter la facture.")
-                    result["is_valid"] = False
-                elif llm.get("suggested_action") == "review":
-                    result["warnings"].append("⚠️ LLM recommande une vérification manuelle.")
-
-                # Confiance LLM
+                # Combine LLM confidence if available
                 if llm.get("confidence") is not None:
-                    result["llm_confidence"] = float(llm["confidence"])
+                    llm_confidence = float(llm["confidence"])
+                    combined_score = (result["confidence_score"] + llm_confidence) / 2
+                    result["confidence_score"] = round(combined_score, 1)
+                    logger.info(f"  - Score combiné: {result['confidence_score']}%")
 
         except Exception as e:
-            result["warnings"].append(f"⚠️ Erreur LLM: {str(e)}")
+            logger.warning(f"⚠️ Erreur LLM: {str(e)}")
 
-        # SCORE FINAL
-        TOTAL_CHECKS = 6  # ajustable
-        matched = len(result["matched_fields"])
-        base_score = (matched / TOTAL_CHECKS) * 100
-        result["confidence_score"] = round(base_score, 1)
-
-        # Mixer avec le score LLM si disponible
-        if result.get("llm_confidence") is not None:
-            result["confidence_score"] = round(
-                (result["confidence_score"] + result["llm_confidence"]) / 2, 1
-            )
-
-        # Validité
-        if result["confidence_score"] < 70:
+        # VALIDATION FINALE
+        # More lenient validation - 70% is good enough with proper tolerances
+        if result["confidence_score"] < 60:
             result["is_valid"] = False
             if not result["errors"]:
                 result["errors"].append(
-                    f"❌ Score trop faible ({result['confidence_score']}%)."
+                    f"❌ Score de confiance insuffisant ({result['confidence_score']}% < 60%)."
                 )
 
+        logger.info(f"{'='*60}\n")
+        
         return result
 
-    
     def _calculate_similarity(self, str1: str, str2: str) -> float:
-        """Calcule le ratio de similarité entre deux chaînes"""
+        """Calculate similarity ratio between two strings (deprecated - use _compare_strings instead)"""
         if str1 is None or str2 is None:
             return 0.0
-        return SequenceMatcher(None, str1.lower(), str2.lower()).ratio()
+        norm1 = self._normalize_string(str1)
+        norm2 = self._normalize_string(str2)
+        return SequenceMatcher(None, norm1, norm2).ratio()
 
 
 # Fonction utilitaire pour valider une facture complète
 def validate_facture_complete(facture_data: Dict, po_id: str, po_collection) -> Dict:
-    print("\n========= FACTURE DATA DEBUG =========")
-    print(facture_data)
-    print("======================================\n")
-
+    """Wrapper function for complete validation"""
     validator = FactureValidator(po_collection)
     validation_result = validator.validate_against_po(facture_data, po_id)
     

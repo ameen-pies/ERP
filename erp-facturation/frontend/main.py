@@ -34,6 +34,46 @@ st.markdown(f"""
     .status-active {{ background-color: #d1fae5; color: #065f46; }}
     .status-rejetee {{ background-color: #fee2e2; color: #991b1b; }}
     .status-archivee {{ background-color: #f3f4f6; color: #6b7280; }}
+    
+    /* Info boxes with proper contrast */
+    .info-box {{
+        background-color: #dbeafe;
+        border-left: 4px solid #3b82f6;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        color: #1e3a8a;
+    }}
+    .info-box strong {{
+        color: #1e40af !important;
+    }}
+    
+    .success-box {{
+        background-color: #d1fae5;
+        border-left: 4px solid #10b981;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        color: #065f46;
+    }}
+    
+    .warning-box {{
+        background-color: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        color: #92400e;
+    }}
+    
+    .error-box {{
+        background-color: #fee2e2;
+        border-left: 4px solid #ef4444;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        color: #991b1b;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -249,7 +289,7 @@ elif page == "📋 Liste des PRs":
             prs = response.json()
             
             if not prs:
-                st.info("📭 Aucune PR trouvée")
+                st.info("🔭 Aucune PR trouvée")
             else:
                 st.write(f"**{len(prs)} PR(s) trouvée(s)**")
                 

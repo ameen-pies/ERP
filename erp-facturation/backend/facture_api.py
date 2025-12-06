@@ -16,7 +16,7 @@ facture_router = APIRouter(prefix="/factures", tags=["Factures"])
 
 # Get MongoDB collections
 db = get_database()
-po_collection = db["POs"]
+po_collection = db["bons_commande"]  # ✅ FIXED: Use correct collection name
 facture_collection = db["factures"]
 
 # Initialize EasyOCR (no API key needed!)
@@ -28,6 +28,39 @@ except Exception as e:
     ocr_reader = None
 
 
+def map_po_fields(po: dict) -> dict:
+    """
+    Map bons_commande structure to expected PO structure for validation
+    """
+    # Extract first ligne if exists
+    first_ligne = po.get("lignes", [{}])[0] if po.get("lignes") else {}
+    
+    # Calculate total quantity from all lines
+    total_quantite = sum(ligne.get("quantite", 0) for ligne in po.get("lignes", []))
+    
+    return {
+        "purchase_order_id": po.get("purchase_order_id"),
+        "linked_pr_id": po.get("linked_pr_id"),
+        "type_achat": po.get("type_achat"),
+        "quantite": total_quantite or first_ligne.get("quantite"),
+        "unite": first_ligne.get("unite"),
+        "prix_estime": po.get("montant_total_ttc"),
+        "montant_ht": po.get("montant_total_ht"),
+        "montant_tva": po.get("montant_tva"),
+        "montant_ttc": po.get("montant_total_ttc"),
+        "devise": po.get("devise", "TND"),
+        "centre_cout": po.get("centre_cout"),
+        "priorite": po.get("priorite"),
+        "delai_souhaite": po.get("delai_souhaite"),
+        "date_livraison_souhaitee": po.get("date_livraison_souhaitee"),
+        "specifications_techniques": first_ligne.get("specifications_techniques") or first_ligne.get("description"),
+        "fournisseur": po.get("fournisseur", {}),
+        "demandeur": po.get("demandeur", {}),
+        "details": po.get("details_demande"),
+        "items": po.get("lignes", [])
+    }
+
+
 @facture_router.post("/upload-and-validate")
 async def upload_facture_with_po_validation(
     file: UploadFile = File(...),
@@ -37,7 +70,7 @@ async def upload_facture_with_po_validation(
     """
     Extraire une facture depuis un fichier uploadé et valider contre un PO
     
-    NEW: Uses EasyOCR for local, offline text extraction (no API needed!)
+    Uses EasyOCR for local, offline text extraction (no API needed!)
     
     Steps:
     1. Read uploaded file bytes
@@ -105,10 +138,17 @@ async def upload_facture_with_po_validation(
 
         # Step 3: Retrieve PO from database
         logger.info(f"🔍 Searching for PO: {po_id}")
-        po = po_collection.find_one({"purchase_order_id": po_id})
+        po_raw = po_collection.find_one({"purchase_order_id": po_id})
 
-        if not po:
-            error_msg = f"Purchase Order {po_id} not found"
+        # Try with BC prefix if user entered just the number
+        if not po_raw and not po_id.startswith("BC-"):
+            logger.info(f"🔍 Trying with BC- prefix: BC-{po_id}")
+            po_raw = po_collection.find_one({"purchase_order_id": f"BC-{po_id}"})
+            if po_raw:
+                po_id = f"BC-{po_id}"  # Update po_id for consistency
+        
+        if not po_raw:
+            error_msg = f"Purchase Order {po_id} not found in bons_commande collection"
             logger.error(f"❌ {error_msg}")
             
             # Send error email
@@ -120,7 +160,7 @@ async def upload_facture_with_po_validation(
                 <p>Le bon de commande <strong>{po_id}</strong> est introuvable dans la base de données.</p>
                 <p>Veuillez vérifier que:</p>
                 <ul>
-                    <li>L'ID du PO est correct (format: PO-XXX)</li>
+                    <li>L'ID du PO est correct (format: BC-XXXX ou simplement le numéro)</li>
                     <li>Le PO existe bien dans le système</li>
                     <li>Le PO n'a pas été supprimé</li>
                 </ul>
@@ -140,7 +180,11 @@ async def upload_facture_with_po_validation(
                 detail=error_msg
             )
 
-        logger.info(f"✅ PO found: {po.get('purchase_order_id')}")
+        logger.info(f"✅ PO found: {po_raw.get('purchase_order_id')}")
+        
+        # Map the PO structure to expected format
+        po = map_po_fields(po_raw)
+        logger.info(f"✅ PO mapped successfully")
 
         # Step 4: Validation against PO
         logger.info("🔍 Validating invoice against PO...")
@@ -180,7 +224,7 @@ async def upload_facture_with_po_validation(
             "centre_cout": po.get("centre_cout"),
             "priorite": po.get("priorite"),
             "delai_souhaite": po.get("delai_souhaite"),
-            "date_livraison_souhaite": po.get("date livraison souhaitée"),
+            "date_livraison_souhaite": po.get("date_livraison_souhaitee"),
             "specifications_techniques": ocr_result.get("specifications_techniques") or po.get("specifications_techniques"),
             
             # Status
@@ -188,9 +232,9 @@ async def upload_facture_with_po_validation(
             
             # OCR metadata
             "ocr_data": {
-                "method": "EasyOCR",  # NEW: Track OCR method used
+                "method": "EasyOCR",
                 "confidence": ocr_result.get("confidence", 0.0),
-                "raw_text": ocr_result.get("raw_text", "")[:500],  # Limit to 500 chars
+                "raw_text": ocr_result.get("raw_text", "")[:500],
                 "extraction_date": datetime.now().isoformat()
             },
             
