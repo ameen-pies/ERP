@@ -14,7 +14,7 @@ st.set_page_config(
     page_title="ERP System", 
     layout="wide", 
     page_icon="🏢",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
@@ -36,7 +36,7 @@ def style_chart(fig, title=None):
             font_family="Inter",
             bordercolor="#e2e8f0"
         ),
-        colorway=["#06b6d4", "#0891b2", "#155e75", "#22d3ee", "#67e8f9"]
+        colorway=["#64748b", "#475569", "#334155", "#94a3b8", "#cbd5e1"]
     )
     if title:
         fig.update_layout(title=title)
@@ -85,7 +85,7 @@ st.markdown("""
     
     /* Main container styling */
     .main {
-        background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         padding: 2rem;
     }
     
@@ -93,7 +93,7 @@ st.markdown("""
         background: #ffffff;
         border-radius: 20px;
         padding: 2.5rem !important;
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.15);
+        box-shadow: 0 20px 60px rgba(100, 116, 139, 0.15);
         max-width: 1400px;
         margin: 0 auto;
     }
@@ -102,7 +102,7 @@ st.markdown("""
     .main-header {
         font-size: 3rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 50%, #e2e8f0 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
@@ -113,7 +113,7 @@ st.markdown("""
     
     .subtitle {
         text-align: center;
-        color: #475569;
+        color: #94a3b8;
         font-size: 1.1rem;
         margin-bottom: 2.5rem;
         font-weight: 500;
@@ -121,9 +121,9 @@ st.markdown("""
     
     /* Sidebar styling - Fond clair avec texte foncé */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #f0fdfa 0%, #ccfbf1 100%);
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
         padding: 2rem 1rem;
-        border-right: 2px solid #06b6d4;
+        border-right: 2px solid #cbd5e1;
     }
     
     [data-testid="stSidebar"] .element-container {
@@ -144,18 +144,18 @@ st.markdown("""
     }
     
     [data-testid="stSidebar"] [role="radiogroup"] label {
-        background: rgba(6, 182, 212, 0.15);
+        background: rgba(203, 213, 225, 0.3);
         padding: 0.75rem 1rem;
         border-radius: 10px;
         margin: 0.5rem 0;
         transition: all 0.3s ease;
         border-left: 3px solid transparent;
-        color: #0f172a !important;
+        color: #475569 !important;
     }
     
     [data-testid="stSidebar"] [role="radiogroup"] label:hover {
-        background: rgba(6, 182, 212, 0.3);
-        border-left-color: #06b6d4;
+        background: rgba(203, 213, 225, 0.5);
+        border-left-color: #94a3b8;
         transform: translateX(5px);
     }
     
@@ -198,6 +198,31 @@ st.markdown("""
         color: #0f172a !important;
     }
     
+    /* Navigation bar styling */
+    .nav-container {
+        background: linear-gradient(90deg, #cbd5e1 0%, #e2e8f0 50%, #f1f5f9 100%);
+        padding: 1rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+        box-shadow: 0 4px 12px rgba(203, 213, 225, 0.3);
+    }
+    
+    .nav-button {
+        background: transparent !important;
+        color: #64748b !important;
+        border: 2px solid rgba(203, 213, 225, 0.5) !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .nav-button:hover {
+        background: rgba(241, 245, 249, 0.6) !important;
+        border-color: #94a3b8 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2) !important;
+    }
+    
     /* Metric cards modern design */
     [data-testid="stMetricValue"] {
         font-size: 2rem;
@@ -207,7 +232,7 @@ st.markdown("""
     
     [data-testid="stMetricLabel"] {
         font-size: 0.85rem;
-        color: #64748b;
+        color: #94a3b8;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -224,13 +249,13 @@ st.markdown("""
     
     [data-testid="metric-container"]:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
-        border-color: #06b6d4;
+        box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);
+        border-color: #cbd5e1;
     }
     
     /* Button styling */
     .stButton > button {
-        background: #06b6d4;
+        background: #94a3b8;
         color: white;
         border: none;
         border-radius: 8px;
@@ -238,34 +263,19 @@ st.markdown("""
         font-weight: 600;
         font-size: 1rem;
         transition: all 0.2s ease;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 1px 3px rgba(148, 163, 184, 0.2);
     }
     
     .stButton > button:hover {
-        background: #0891b2;
+        background: #cbd5e1;
+        color: #475569;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        box-shadow: 0 4px 12px rgba(148, 163, 184, 0.3);
     }
     
     .stButton > button:active {
         transform: translateY(0);
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Download button */
-    .stDownloadButton > button {
-        background: #ffffff !important;
-        color: #06b6d4 !important;
-        border: 1.5px solid #06b6d4 !important;
-        border-radius: 8px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-    
-    .stDownloadButton > button:hover {
-        background: #e0f2fe !important;
-        border-color: #0891b2 !important;
     }
     
     /* Form styling */
@@ -316,16 +326,16 @@ st.markdown("""
     
     .stNumberInput button:hover {
         background-color: #e0f2fe !important;
-        border-color: #06b6d4 !important;
-        color: #06b6d4 !important;
+        border-color: #cbd5e1 !important;
+        color: #94a3b8 !important;
     }
     
     .stNumberInput button svg {
-        color: #64748b !important;
+        color: #94a3b8 !important;
     }
     
     .stNumberInput button:hover svg {
-        color: #06b6d4 !important;
+        color: #cbd5e1 !important;
     }
     
     .stTextInput > div > div > input::placeholder,
@@ -374,8 +384,8 @@ st.markdown("""
     }
     
     .stTextArea textarea:focus {
-        border-color: #06b6d4 !important;
-        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1) !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 0 0 4px rgba(203, 213, 225, 0.2) !important;
     }
     
     .stTextArea > div {
@@ -408,8 +418,8 @@ st.markdown("""
     
     .stMultiSelect [data-baseweb="tag"] {
         background-color: #e0f2fe !important;
-        color: #0c4a6e !important;
-        border: 1px solid #06b6d4;
+        color: #64748b !important;
+        border: 1px solid #cbd5e1;
     }
     
     /* Dropdown menu styling */
@@ -432,20 +442,20 @@ st.markdown("""
     
     [role="option"]:hover {
         background-color: #f0f9ff !important;
-        color: #06b6d4 !important;
+        color: #94a3b8 !important;
     }
     
     [aria-selected="true"][role="option"] {
-        background-color: #e0f2fe !important;
-        color: #0c4a6e !important;
+        background-color: #f1f5f9 !important;
+        color: #64748b !important;
     }
     
     .stTextInput > div > div > input:focus,
     .stSelectbox > div > div > select:focus,
     .stTextArea > div > div > textarea:focus,
     .stNumberInput > div > div > input:focus {
-        border-color: #06b6d4;
-        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+        border-color: #cbd5e1;
+        box-shadow: 0 0 0 4px rgba(203, 213, 225, 0.2);
         background-color: #ffffff;
         outline: none;
     }
@@ -461,7 +471,7 @@ st.markdown("""
     }
     
     [data-baseweb="select"] svg {
-        color: #64748b !important;
+        color: #94a3b8 !important;
     }
     
     [data-baseweb="select"] input {
@@ -481,7 +491,7 @@ st.markdown("""
         border-radius: 10px 10px 0 0;
         padding: 1rem 2rem;
         font-weight: 600;
-        color: #64748b;
+        color: #94a3b8;
         border: none;
         transition: all 0.3s ease;
         border-bottom: 3px solid transparent;
@@ -489,13 +499,13 @@ st.markdown("""
     
     .stTabs [data-baseweb="tab"]:hover {
         background: #f8fafc;
-        color: #06b6d4;
+        color: #94a3b8;
     }
     
     .stTabs [aria-selected="true"] {
         background: #ffffff;
-        color: #06b6d4;
-        border-bottom: 3px solid #06b6d4;
+        color: #64748b;
+        border-bottom: 3px solid #cbd5e1;
         font-weight: 700;
     }
     
@@ -548,8 +558,8 @@ st.markdown("""
     /* Info box */
     .element-container div[data-baseweb="notification"][kind="info"] {
         background: #f0f9ff;
-        border-color: #06b6d4;
-        color: #0c4a6e;
+        border-color: #cbd5e1;
+        color: #475569;
     }
     
     /* Warning box */
@@ -575,7 +585,7 @@ st.markdown("""
     
     /* Progress bar */
     .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #06b6d4 0%, #0891b2 100%);
+        background: linear-gradient(90deg, #cbd5e1 0%, #e2e8f0 50%, #f1f5f9 100%);
         border-radius: 10px;
     }
     
@@ -625,14 +635,14 @@ st.markdown("""
     [data-testid="stNumberInput-StepUp"]:hover,
     [data-testid="stNumberInput-StepDown"]:hover {
         background-color: #e0f2fe !important;
-        color: #06b6d4 !important;
+        color: #475569 !important;
     }
     
     /* Download button */
     .stDownloadButton > button {
         background: #ffffff !important;
-        color: #06b6d4 !important;
-        border: 1.5px solid #06b6d4 !important;
+        color: #94a3b8 !important;
+        border: 1.5px solid #cbd5e1 !important;
         border-radius: 8px;
         padding: 0.75rem 2rem;
         font-weight: 600;
@@ -640,8 +650,8 @@ st.markdown("""
     }
     
     .stDownloadButton > button:hover {
-        background: #e0f2fe !important;
-        border-color: #0891b2 !important;
+        background: #f8fafc !important;
+        border-color: #94a3b8 !important;
     }
     
     /* Animations */
@@ -693,7 +703,7 @@ st.markdown("""
     }
     
     .stSlider [data-baseweb="slider"] [role="slider"] {
-        background-color: #06b6d4 !important;
+        background-color: #cbd5e1 !important;
     }
     
     /* Date Input styling */
@@ -706,11 +716,11 @@ st.markdown("""
     
     .stDateInput button {
         background-color: #ffffff !important;
-        color: #64748b !important;
+        color: #94a3b8 !important;
     }
     
     .stDateInput button:hover {
-        color: #06b6d4 !important;
+        color: #cbd5e1 !important;
     }
     
     /* Time Input styling */
@@ -725,19 +735,19 @@ st.markdown("""
     [data-testid="stNumberInput-StepUp"],
     [data-testid="stNumberInput-StepDown"] {
         background-color: #f8fafc !important;
-        border: 1px solid #cbd5e1 !important;
-        color: #64748b !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #94a3b8 !important;
     }
     
     [data-testid="stNumberInput-StepUp"]:hover,
     [data-testid="stNumberInput-StepDown"]:hover {
-        background-color: #e0f2fe !important;
-        color: #06b6d4 !important;
+        background-color: #f1f5f9 !important;
+        color: #cbd5e1 !important;
     }
     
     /* Progress bar styling */
     .stProgress > div > div > div > div {
-        background-color: #06b6d4 !important;
+        background-color: #cbd5e1 !important;
     }
     
     .stProgress > div > div > div {
@@ -749,17 +759,17 @@ st.markdown("""
         background: #ffffff;
         padding: 1.5rem;
         border-radius: 12px;
-        border-left: 4px solid #06b6d4;
+        border-left: 4px solid #cbd5e1;
         border: 1.5px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 1px 3px rgba(148, 163, 184, 0.1);
         margin: 1rem 0;
         transition: all 0.2s ease;
     }
     
     .metric-card:hover {
         transform: translateX(3px);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
-        border-left-color: #0891b2;
+        box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);
+        border-left-color: #94a3b8;
     }
     
     .success-box {
@@ -805,10 +815,24 @@ def api_call(method: str, endpoint: str, data: dict = None, params: dict = None)
         elif method == "DELETE":
             response = requests.delete(url, timeout=10)
         
+        # Vérifier si la réponse est vide
+        if not response.text or response.text.strip() == '':
+            if response.status_code in [200, 201, 204]:
+                return True, []  # Réponse vide mais succès
+            else:
+                return False, f"Erreur {response.status_code}: Réponse vide du serveur"
+        
+        # Essayer de parser le JSON
+        try:
+            response_json = response.json()
+        except ValueError as json_err:
+            # Si le JSON ne peut pas être parsé, retourner le texte brut
+            return False, f"Erreur de parsing JSON: {str(json_err)}. Réponse: {response.text[:200]}"
+        
         if response.status_code in [200, 201]:
-            return True, response.json()
+            return True, response_json
         else:
-            error_detail = response.json().get('detail', 'Erreur inconnue')
+            error_detail = response_json.get('detail', f'Erreur {response.status_code}: {response.text[:200]}')
             return False, error_detail
             
     except requests.exceptions.ConnectionError:
@@ -820,27 +844,663 @@ def api_call(method: str, endpoint: str, data: dict = None, params: dict = None)
 
 # Header principal moderne
 st.markdown('<div class="main-header">ERP System</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Plateforme de Gestion Intégrée - MongoDB Edition</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Plateforme de Gestion Intégrée</div>', unsafe_allow_html=True)
 
-# Vérification de l'état du système
-with st.sidebar:    
-    # Statistiques
-    st.markdown("### Statistiques")
-    success_stats, stats = api_call("GET", "/stats")
+st.markdown("---")
+
+# Styles pour les statistiques modernes
+st.markdown("""
+<style>
+    .stat-card-modern {
+        background: #ffffff;
+        border: none;
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(71, 85, 105, 0.08), 0 1px 3px rgba(71, 85, 105, 0.04);
+        position: relative;
+        overflow: hidden;
+        border-top: 3px solid transparent;
+        background-clip: padding-box;
+    }
     
-    if success_stats:
-        st.metric("Fournisseurs", stats.get("suppliers", 0))
-        st.metric("Budgets", stats.get("budgets", 0))
-        st.metric("Articles Stock", stats.get("stock_items", 0))
-        st.metric("Mouvements", stats.get("stock_movements", 0))
+    .stat-card-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #475569 0%, #64748b 50%, #94a3b8 100%);
+    }
+    
+    .stat-card-modern::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .stat-card-modern:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(71, 85, 105, 0.15), 0 8px 16px rgba(71, 85, 105, 0.1);
+        border-top-color: #64748b;
+    }
+    
+    .stat-card-modern:hover::after {
+        left: 100%;
+    }
+    
+    .stat-value-modern {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 1rem 0 0.5rem 0;
+        line-height: 1;
+        letter-spacing: -1px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.7rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 700;
+        margin-top: 0.75rem;
+    }
+    
+    .stat-subvalue-modern {
+        font-size: 0.8rem;
+        color: #475569;
+        margin-top: 0.75rem;
+        font-weight: 600;
+        padding-top: 0.5rem;
+        border-top: 1px solid #e2e8f0;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-# Navigation
-st.sidebar.markdown("---")
-module = st.sidebar.radio(
-    "Modules ERP",
-    ["1. Référentiel Fournisseurs", "2. Contrôle Budgétaire", "3. Gestion Stock & Compta"],
-    index=0
-)
+# Barre de statistiques modernisée
+stat_col1, stat_col2 = st.columns([5, 1])
+
+with stat_col1:
+    st.markdown("### Statistiques du Système")
+
+with stat_col2:
+    if st.button("Actualiser", key="refresh_stats", use_container_width=True):
+        st.cache_clear()
+        st.rerun()
+
+success_stats, stats = api_call("GET", "/stats")
+
+if success_stats:
+    col1, col2, col3, col4, col5 = st.columns(5)
+    
+    with col1:
+        st.markdown(f'''
+        <div class="stat-card-modern">
+            <div class="stat-value-modern">{stats.get('suppliers', 0)}</div>
+            <div class="stat-label-modern">Fournisseurs</div>
+            <div class="stat-subvalue-modern">{stats.get('suppliers_active', 0)} actifs</div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f'''
+        <div class="stat-card-modern">
+            <div class="stat-value-modern">{stats.get('stock_items', 0)}</div>
+            <div class="stat-label-modern">Articles Stock</div>
+            <div class="stat-subvalue-modern">{stats.get('total_stock_quantity', 0):.0f} unités</div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    with col3:
+        total_stock_value = stats.get('total_stock_value', 0)
+        st.markdown(f'''
+        <div class="stat-card-modern">
+            <div class="stat-value-modern">{total_stock_value:,.0f}€</div>
+            <div class="stat-label-modern">Valeur Stock</div>
+            <div class="stat-subvalue-modern">Total inventaire</div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown(f'''
+        <div class="stat-card-modern">
+            <div class="stat-value-modern">{stats.get('departments', 0)}</div>
+            <div class="stat-label-modern">Départements</div>
+            <div class="stat-subvalue-modern">{stats.get('budgets', 0)} budgets</div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    with col5:
+        st.markdown(f'''
+        <div class="stat-card-modern">
+            <div class="stat-value-modern">{stats.get('stock_movements', 0)}</div>
+            <div class="stat-label-modern">Mouvements</div>
+            <div class="stat-subvalue-modern">{stats.get('low_stock_items', 0)} stock faible</div>
+        </div>
+        ''', unsafe_allow_html=True)
+
+st.markdown("---")
+
+# Barre de navigation modernisée
+st.markdown("---")
+st.markdown("### Navigation")
+
+# Initialiser la session state si nécessaire
+if "selected_module" not in st.session_state:
+    st.session_state.selected_module = "0. Gestion Départements"
+
+nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
+
+current_module = st.session_state.selected_module
+
+# Styles pour les boutons de navigation modernes
+st.markdown("""
+<style>
+    .nav-button-container {
+        position: relative;
+        display: flex;
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    button[data-testid*="nav_dept"],
+    button[data-testid*="nav_fourn"],
+    button[data-testid*="nav_budget"],
+    button[data-testid*="nav_stock"] {
+        background: #ffffff !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 1.5rem 2rem !important;
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+        letter-spacing: 1px !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 2px 6px rgba(71, 85, 105, 0.08), 0 1px 3px rgba(71, 85, 105, 0.04) !important;
+        color: #475569 !important;
+        text-transform: uppercase !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        position: relative !important;
+        overflow: hidden !important;
+        border-top: 2px solid transparent !important;
+        width: 100% !important;
+    }
+    
+    button[data-testid*="nav_dept"]::before,
+    button[data-testid*="nav_fourn"]::before,
+    button[data-testid*="nav_budget"]::before,
+    button[data-testid*="nav_stock"]::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #475569 0%, #64748b 50%, #94a3b8 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    button[data-testid*="nav_dept"]:hover::before,
+    button[data-testid*="nav_fourn"]:hover::before,
+    button[data-testid*="nav_budget"]:hover::before,
+    button[data-testid*="nav_stock"]:hover::before {
+        opacity: 1;
+    }
+    
+    button[data-testid*="nav_dept"]:hover,
+    button[data-testid*="nav_fourn"]:hover,
+    button[data-testid*="nav_budget"]:hover,
+    button[data-testid*="nav_stock"]:hover {
+        transform: translateY(-4px) scale(1.02) !important;
+        box-shadow: 0 12px 24px rgba(71, 85, 105, 0.15), 0 6px 12px rgba(71, 85, 105, 0.1) !important;
+        background: #f8fafc !important;
+        color: #334155 !important;
+        border-top-color: #64748b !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Appliquer le style actif selon le module sélectionné
+active_style = "<style>"
+if "Gestion Départements" in current_module:
+    active_style += """
+    button[data-testid*="nav_dept"] {
+        background: linear-gradient(135deg, #475569 0%, #64748b 100%) !important;
+        color: white !important;
+        border-top: 2px solid #64748b !important;
+        box-shadow: 0 10px 25px rgba(71, 85, 105, 0.25), 0 5px 10px rgba(71, 85, 105, 0.15) !important;
+    }
+    button[data-testid*="nav_dept"]::before {
+        opacity: 1 !important;
+        background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);
+    }
+    """
+elif "Fournisseurs" in current_module:
+    active_style += """
+    button[data-testid*="nav_fourn"] {
+        background: linear-gradient(135deg, #475569 0%, #64748b 100%) !important;
+        color: white !important;
+        border-top: 2px solid #64748b !important;
+        box-shadow: 0 10px 25px rgba(71, 85, 105, 0.25), 0 5px 10px rgba(71, 85, 105, 0.15) !important;
+    }
+    button[data-testid*="nav_fourn"]::before {
+        opacity: 1 !important;
+        background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);
+    }
+    """
+elif "Stock" in current_module:
+    active_style += """
+    button[data-testid*="nav_stock"] {
+        background: linear-gradient(135deg, #475569 0%, #64748b 100%) !important;
+        color: white !important;
+        border-top: 2px solid #64748b !important;
+        box-shadow: 0 10px 25px rgba(71, 85, 105, 0.25), 0 5px 10px rgba(71, 85, 105, 0.15) !important;
+    }
+    button[data-testid*="nav_stock"]::before {
+        opacity: 1 !important;
+        background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);
+    }
+    """
+
+elif "Budgétaire" in current_module:
+    active_style += """
+    button[data-testid*="nav_budget"] {
+        background: linear-gradient(135deg, #475569 0%, #64748b 100%) !important;
+        color: white !important;
+        border-top: 2px solid #64748b !important;
+        box-shadow: 0 10px 25px rgba(71, 85, 105, 0.25), 0 5px 10px rgba(71, 85, 105, 0.15) !important;
+    }
+    button[data-testid*="nav_budget"]::before {
+        opacity: 1 !important;
+        background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);
+    }
+    """
+
+active_style += "</style>"
+st.markdown(active_style, unsafe_allow_html=True)
+
+with nav_col1:
+    btn_dept = st.button("Départements", use_container_width=True, key="nav_dept")
+with nav_col2:
+    btn_fournisseurs = st.button("Fournisseurs", use_container_width=True, key="nav_fourn")
+with nav_col3:
+    btn_budget = st.button("Budget", use_container_width=True, key="nav_budget")
+with nav_col4:
+    btn_stock = st.button("Stock & Compta", use_container_width=True, key="nav_stock")
+
+# Déterminer le module sélectionné
+if btn_dept:
+    st.session_state.selected_module = "0. Gestion Départements"
+elif btn_fournisseurs:
+    st.session_state.selected_module = "1. Référentiel Fournisseurs"
+elif btn_budget:
+    st.session_state.selected_module = "2. Contrôle Budgétaire"
+elif btn_stock:
+    st.session_state.selected_module = "3. Gestion Stock & Compta"
+
+# Initialiser la session state si nécessaire
+if "selected_module" not in st.session_state:
+    st.session_state.selected_module = "0. Gestion Départements"
+
+module = st.session_state.selected_module
+
+st.markdown("---")
+
+# ==================== MODULE 0: GESTION DÉPARTEMENTS ====================
+
+if "Gestion Départements" in module:
+    st.markdown("## Gestion des Départements")
+    st.markdown("")
+    
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Ajouter", "Lister", "Éditer", "Supprimer", "Budgets"])
+    
+    # ==================== TAB 1: AJOUTER UN DÉPARTEMENT ====================
+    with tab1:
+        st.subheader("Ajouter un nouveau département")
+        
+        with st.form("add_dept_form"):
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                dept_name = st.text_input("Nom du département *", placeholder="Ex: Direction Générale")
+                dept_code = st.text_input("Code *", placeholder="Ex: DG", max_chars=10)
+            
+            with col2:
+                dept_manager = st.text_input("Gestionnaire", placeholder="Ex: Jean Dupont")
+                dept_email = st.text_input("Email", placeholder="Ex: contact@example.com")
+            
+            dept_description = st.text_area("Description", placeholder="Description optionnelle du département")
+            
+            submit = st.form_submit_button("Créer le département", use_container_width=True)
+            
+            if submit:
+                if not dept_name or not dept_code:
+                    st.error("Le nom et le code sont obligatoires")
+                else:
+                    payload = {
+                        "name": dept_name,
+                        "code": dept_code,
+                        "manager": dept_manager if dept_manager else None,
+                        "email": dept_email if dept_email else None,
+                        "description": dept_description if dept_description else None
+                    }
+                    success, result = api_call("POST", "/departments/", payload)
+                    
+                    if success:
+                        st.success(f"Département '{dept_name}' créé avec succès!")
+                        st.json(result)
+                    else:
+                        st.error(f"Erreur: {result}")
+    
+    # ==================== TAB 2: LISTER LES DÉPARTEMENTS ====================
+    with tab2:
+        st.subheader("Liste des départements")
+        
+        if st.button(" Actualiser la liste", use_container_width=True):
+            st.rerun()
+        
+        success_list, departments = api_call("GET", "/departments/")
+        
+        if success_list and departments:
+            # Tableau
+            df_depts = pd.DataFrame(departments)
+            
+            # Colonnes à afficher
+            cols_to_show = ["id", "name", "code", "manager", "email", "status"]
+            cols_available = [c for c in cols_to_show if c in df_depts.columns]
+            df_display = df_depts[cols_available].copy()
+            
+            st.metric("Total de départements", len(departments))
+            
+            st.dataframe(
+                df_display,
+                use_container_width=True,
+                column_config={
+                    "id": st.column_config.TextColumn("ID", width="small"),
+                    "name": st.column_config.TextColumn("Nom", width="medium"),
+                    "code": st.column_config.TextColumn("Code", width="small"),
+                    "manager": st.column_config.TextColumn("Gestionnaire", width="medium"),
+                    "email": st.column_config.TextColumn("Email", width="medium"),
+                    "status": st.column_config.TextColumn("Statut", width="small")
+                },
+                hide_index=True
+            )
+        elif not success_list:
+            st.error(f"❌ Erreur: {departments}")
+        else:
+            st.info("Aucun département trouvé")
+    
+    # ==================== TAB 3: ÉDITER UN DÉPARTEMENT ====================
+    with tab3:
+        st.subheader("Éditer un département")
+        
+        success_list, departments = api_call("GET", "/departments/")
+        
+        if success_list and departments:
+            # Sélectionner un département
+            dept_options = {d["id"]: f"{d['name']} ({d['code']})" for d in departments}
+            selected_id = st.selectbox(
+                "Sélectionner un département à éditer",
+                list(dept_options.keys()),
+                format_func=lambda x: dept_options[x]
+            )
+            
+            if selected_id:
+                selected_dept = next((d for d in departments if d["id"] == selected_id), None)
+                
+                if selected_dept:
+                    st.info(f"Édition: {selected_dept['name']} ({selected_dept['code']})")
+                    
+                    with st.form("edit_dept_form"):
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            edit_name = st.text_input(
+                                "Nom du département",
+                                value=selected_dept.get("name", "")
+                            )
+                            edit_code = st.text_input(
+                                "Code",
+                                value=selected_dept.get("code", ""),
+                                max_chars=10,
+                                disabled=True  # Code ne peut pas être modifié
+                            )
+                        
+                        with col2:
+                            edit_manager = st.text_input(
+                                "Gestionnaire",
+                                value=selected_dept.get("manager", "")
+                            )
+                            edit_email = st.text_input(
+                                "Email",
+                                value=selected_dept.get("email", "")
+                            )
+                        
+                        edit_description = st.text_area(
+                            "Description",
+                            value=selected_dept.get("description", "")
+                        )
+                        
+                        submit_edit = st.form_submit_button("Sauvegarder les modifications", use_container_width=True)
+                        
+                        if submit_edit:
+                            update_payload = {
+                                "name": edit_name,
+                                "manager": edit_manager if edit_manager else None,
+                                "email": edit_email if edit_email else None,
+                                "description": edit_description if edit_description else None
+                            }
+                            success_update, result_update = api_call(
+                                "PUT",
+                                f"/departments/{selected_id}",
+                                update_payload
+                            )
+                            
+                            if success_update:
+                                st.success("Département mis à jour avec succès!")
+                                st.rerun()
+                            else:
+                                st.error(f"Erreur: {result_update}")
+        else:
+            st.error(f"❌ Erreur: {departments}")
+    
+    # ==================== TAB 4: SUPPRIMER UN DÉPARTEMENT ====================
+    with tab4:
+        st.subheader("Supprimer un département")
+        st.warning("Attention: La suppression d'un département ne peut être annulée. Assurez-vous que le département n'est pas en cours d'utilisation.")
+        
+        success_list, departments = api_call("GET", "/departments/")
+        
+        if success_list and departments:
+            dept_options = {d["id"]: f"{d['name']} ({d['code']})" for d in departments}
+            selected_id_delete = st.selectbox(
+                "Sélectionner un département à supprimer",
+                list(dept_options.keys()),
+                format_func=lambda x: dept_options[x],
+                key="delete_select"
+            )
+            
+            if selected_id_delete:
+                selected_dept_delete = next((d for d in departments if d["id"] == selected_id_delete), None)
+                
+                if selected_dept_delete:
+                    st.error(f" Département sélectionné: {selected_dept_delete['name']} ({selected_dept_delete['code']})")
+                    
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        if st.button("Confirmer la suppression", use_container_width=True, key="confirm_delete"):
+                            success_delete, result_delete = api_call(
+                                "DELETE",
+                                f"/departments/{selected_id_delete}"
+                            )
+                            
+                            if success_delete:
+                                st.success(f"Département '{selected_dept_delete['name']}' supprimé avec succès!")
+                                st.rerun()
+                            else:
+                                st.error(f"Erreur: {result_delete}")
+                    
+                    with col2:
+                        st.button("Annuler", use_container_width=True, key="cancel_delete")
+        else:
+            st.error(f"❌ Erreur: {departments}")
+    
+    # ==================== TAB 5: BUDGETS ====================
+    with tab5:
+        st.subheader("Gestion des Budgets")
+        
+        # Sub-tabs pour création et édition
+        subtab1, subtab2 = st.tabs(["Créer un Budget", "Éditer un Budget"])
+        
+        # ==================== SUB-TAB 1: CRÉER UN BUDGET ====================
+        with subtab1:
+            st.subheader("Créer un nouveau budget")
+            
+            success_list, departments = api_call("GET", "/departments/")
+            
+            if success_list and departments:
+                dept_options = {d["id"]: f"{d['name']} ({d['code']})" for d in departments}
+                selected_dept_id = st.selectbox(
+                    "Sélectionner un département *",
+                    list(dept_options.keys()),
+                    format_func=lambda x: dept_options[x],
+                    key="create_budget_dept"
+                )
+                
+                if selected_dept_id:
+                    selected_dept = next((d for d in departments if d["id"] == selected_dept_id), None)
+                    
+                    with st.form("create_budget_form"):
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            dept_display = st.text_input(
+                                "Département",
+                                value=f"{selected_dept['name']} ({selected_dept['code']})",
+                                disabled=True
+                            )
+                            allocated = st.number_input(
+                                "Montant Alloué (€) *",
+                                min_value=0.0,
+                                step=1000.0,
+                                value=50000.0
+                            )
+                        
+                        with col2:
+                            used = st.number_input(
+                                "Montant Utilisé (€)",
+                                min_value=0.0,
+                                step=100.0,
+                                value=0.0
+                            )
+                            st.info(f"**Disponible**: {allocated - used:,.2f} €")
+                        
+                        submit_create = st.form_submit_button("Créer le Budget", use_container_width=True)
+                        
+                        if submit_create:
+                            payload = {
+                                "department": selected_dept['name'],
+                                "allocated": allocated,
+                                "used": used
+                            }
+                            success_create, result_create = api_call("POST", "/budget/", payload)
+                            
+                            if success_create:
+                                st.success(f"Budget créé pour {selected_dept['name']}!")
+                                st.json(result_create)
+                            else:
+                                st.error(f"Erreur: {result_create}")
+            else:
+                st.error("Impossible de charger les départements")
+        
+        # ==================== SUB-TAB 2: ÉDITER UN BUDGET ====================
+        with subtab2:
+            st.subheader("Éditer un budget existant")
+            
+            success_budgets, budgets = api_call("GET", "/budget/")
+            
+            if success_budgets and budgets:
+                budget_options = {b["id"]: f"{b['department']} - {b['allocated']:,.0f}€" for b in budgets}
+                selected_budget_id = st.selectbox(
+                    "Sélectionner un budget à éditer",
+                    list(budget_options.keys()),
+                    format_func=lambda x: budget_options[x],
+                    key="edit_budget_select"
+                )
+                
+                if selected_budget_id:
+                    selected_budget = next((b for b in budgets if b["id"] == selected_budget_id), None)
+                    
+                    if selected_budget:
+                        st.info(f" Édition: Budget de {selected_budget['department']}")
+                        
+                        col1, col2, col3 = st.columns(3)
+                        with col1:
+                            st.metric("Alloué", f"{selected_budget['allocated']:,.2f} €")
+                        with col2:
+                            st.metric("Utilisé", f"{selected_budget['used']:,.2f} €")
+                        with col3:
+                            st.metric("Disponible", f"{selected_budget['available']:,.2f} €")
+                        
+                        with st.form("edit_budget_form"):
+                            col1, col2 = st.columns(2)
+                            
+                            with col1:
+                                new_allocated = st.number_input(
+                                    "Nouveau Montant Alloué (€)",
+                                    min_value=0.0,
+                                    value=selected_budget['allocated'],
+                                    step=1000.0
+                                )
+                            
+                            with col2:
+                                new_used = st.number_input(
+                                    "Nouveau Montant Utilisé (€)",
+                                    min_value=0.0,
+                                    value=selected_budget['used'],
+                                    step=100.0
+                                )
+                            
+                            col1, col2 = st.columns(2)
+                            
+                            with col1:
+                                submit_update = st.form_submit_button(" Mettre à Jour", use_container_width=True)
+                            
+                            with col2:
+                                submit_reset = st.form_submit_button(" Réinitialiser (used=0)", use_container_width=True)
+                            
+                            if submit_update:
+                                update_payload = {
+                                    "allocated": new_allocated,
+                                    "used": new_used
+                                }
+                                success_update, result_update = api_call("PUT", f"/budget/update/{selected_budget_id}", update_payload)
+                                if success_update:
+                                    st.success("✓ Budget mis à jour avec succès!")
+                                    st.rerun()
+                                else:
+                                    st.error(f"Erreur: {result_update}")
+                            
+                            if submit_reset:
+                                reset_payload = {"used": 0}
+                                success_reset, result_reset = api_call("PUT", f"/budget/reset/{selected_budget.get('department')}", reset_payload)
+                                if success_reset:
+                                    st.success("✓ Budget réinitialisé avec succès!")
+                                    st.rerun()
+                                else:
+                                    st.error(f"Erreur: {result_reset}")
+            else:
+                st.info("Aucun budget trouvé. Créez-en un d'abord!")
 
 # ==================== MODULE 1: FOURNISSEURS ====================
 
@@ -953,7 +1613,15 @@ if "Fournisseurs" in module:
             
             # Affichage avec formatage
             df_display = df[["id", "name", "tax_id", "category", "status", "created_at"]].copy()
-            df_display["created_at"] = pd.to_datetime(df_display["created_at"]).dt.strftime("%Y-%m-%d %H:%M")
+            # Convertir les dates ISO8601 (peut contenir "Z" pour UTC)
+            try:
+                df_display["created_at"] = pd.to_datetime(df_display["created_at"], errors='coerce', utc=True)
+                mask = df_display["created_at"].notna()
+                df_display.loc[mask, "created_at"] = df_display.loc[mask, "created_at"].dt.strftime("%Y-%m-%d %H:%M")
+                df_display.loc[~mask, "created_at"] = "Date invalide"
+            except Exception:
+                # Si la conversion échoue, garder les valeurs originales
+                pass
             
             st.markdown("### Liste des Fournisseurs")
             st.dataframe(
@@ -1089,8 +1757,9 @@ elif "Budgétaire" in module:
                         delta=f"{usage_pct:.1f}% utilisé"
                     )
                     
-                    # Barre de progression
-                    st.progress(usage_pct / 100)
+                    # Barre de progression (limité à 1.0 maximum pour st.progress)
+                    progress_value = min(usage_pct / 100, 1.0)
+                    st.progress(progress_value)
                     st.caption(f"{used:,.0f} € / {allocated:,.0f} €")
             
             st.markdown("")
@@ -1114,7 +1783,7 @@ elif "Budgétaire" in module:
                     name="Disponible", 
                     x=df_budget["Département"], 
                     y=df_budget["Disponible"], 
-                    marker_color="#06b6d4"
+                    marker_color="#64748b"
                 ))
                 
                 fig = style_chart(fig, title="Répartition Budgétaire par Département")
@@ -1134,15 +1803,14 @@ elif "Budgétaire" in module:
                     mode="gauge+number+delta",
                     value=avg_usage,
                     domain={'x': [0, 1], 'y': [0, 1]},
-                    title={'text': "Taux d'Utilisation Moyen"},
                     delta={'reference': 70},
                     gauge={
                         'axis': {'range': [None, 100]},
-                        'bar': {'color': "#06b6d4"},
+                        'bar': {'color': "#64748b"},
                         'steps': [
                             {'range': [0, 50], 'color': "#ccfbf1"},
                             {'range': [50, 75], 'color': "#5eead4"},
-                            {'range': [75, 100], 'color': "#0891b2"}
+                            {'range': [75, 100], 'color': "#475569"}
                         ],
                         'threshold': {
                             'line': {'color': "red", 'width': 4},
@@ -1151,7 +1819,7 @@ elif "Budgétaire" in module:
                         }
                     }
                 ))
-                fig2 = style_chart(fig2)
+                fig2 = style_chart(fig2, title="Taux d'Utilisation Moyen")
                 fig2.update_layout(height=400)
                 st.plotly_chart(fig2, use_container_width=True)
             
@@ -1170,22 +1838,7 @@ elif "Budgétaire" in module:
                 hide_index=True
             )
         else:
-            st.warning("Aucun budget configuré. Créez-en un d'abord!")
-            
-            with st.form("create_budget"):
-                st.subheader("Créer un Budget")
-                dept_name = st.text_input("Nom du Département")
-                allocated_amount = st.number_input("Montant Alloué (€)", min_value=0.0, step=1000.0)
-                
-                if st.form_submit_button("Créer"):
-                    payload = {"department": dept_name, "allocated": allocated_amount, "used": 0.0}
-                    success_create, result_create = api_call("POST", "/budget/", payload)
-                    
-                    if success_create:
-                        st.success(" Budget créé!")
-                        st.rerun()
-                    else:
-                        st.error(result_create)
+            st.info(" Les budgets se créent depuis le Module 0 - Gestion Départements, Onglet 'Budgets'")
     
     with tab2:
         st.subheader("Soumettre une Transaction")
@@ -1262,7 +1915,15 @@ elif "Budgétaire" in module:
         
         if success and transactions:
             df_trx = pd.DataFrame(transactions)
-            df_trx["created_at"] = pd.to_datetime(df_trx["created_at"]).dt.strftime("%Y-%m-%d %H:%M")
+            # Convertir les dates ISO8601 (peut contenir "Z" pour UTC)
+            try:
+                df_trx["created_at"] = pd.to_datetime(df_trx["created_at"], errors='coerce', utc=True)
+                mask = df_trx["created_at"].notna()
+                df_trx.loc[mask, "created_at"] = df_trx.loc[mask, "created_at"].dt.strftime("%Y-%m-%d %H:%M")
+                df_trx.loc[~mask, "created_at"] = "Date invalide"
+            except Exception:
+                # Si la conversion échoue, garder les valeurs originales
+                pass
             
             # Métriques
             col1, col2, col3, col4 = st.columns(4)
@@ -1306,8 +1967,9 @@ elif "Budgétaire" in module:
             
             # Graphique évolution
             st.markdown("### Évolution des Dépenses")
-            df_trx_chart = df_trx.copy()
-            df_trx_chart["date"] = pd.to_datetime(df_trx_chart["created_at"])
+            # Recréer le DataFrame avec les dates originales pour le graphique
+            df_trx_chart = pd.DataFrame(transactions)
+            df_trx_chart["date"] = pd.to_datetime(df_trx_chart["created_at"], errors='coerce', utc=True)
             df_trx_chart = df_trx_chart.sort_values("date")
             df_trx_chart["cumul"] = df_trx_chart["amount"].cumsum()
             
@@ -1317,7 +1979,7 @@ elif "Budgétaire" in module:
                 y=df_trx_chart["cumul"],
                 mode='lines+markers',
                 name='Cumul',
-                line=dict(color='#06b6d4', width=3),
+                line=dict(color='#64748b', width=3),
                 fill='tozeroy'
             ))
             fig = style_chart(fig, title="Cumul des Dépenses dans le Temps")
@@ -1338,6 +2000,14 @@ elif "Stock" in module:
     
     tab1, tab2, tab3, tab4 = st.tabs(["Réception", "Stock Actuel", "Mouvements", "Compta"])
     
+    # Charger les départements pour le sélecteur
+    success_depts, departments = api_call("GET", "/departments")
+    if success_depts and departments:
+        dept_list = [d["name"] for d in departments]
+    else:
+        dept_list = []
+        st.warning("Impossible de charger les départements")
+    
     with tab1:
         st.subheader("Réception de Marchandises")
         
@@ -1350,9 +2020,12 @@ elif "Stock" in module:
                 unit_price = st.number_input("Prix Unitaire (€) *", min_value=0.0, step=0.01)
             
             with col2:
+                if dept_list:
+                    department = st.selectbox("Département *", dept_list)
+                else:
+                    department = st.text_input("Département *", placeholder="Aucun département disponible")
                 movement_type = st.selectbox("Type Mouvement", ["IN", "OUT"])
                 project_id = st.text_input("Code Projet (Optionnel)", placeholder="Ex: PRJ-ALPHA")
-                reference = st.text_input("Référence", placeholder="Ex: BL-2024-001")
             
             description = st.text_area("Description", placeholder="Détails du mouvement")
             
@@ -1363,9 +2036,9 @@ elif "Stock" in module:
                 "item_id": item_id,
                 "quantity": quantity,
                 "unit_price": unit_price,
+                "department": department,
                 "movement_type": movement_type,
                 "project_id": project_id if project_id else None,
-                "reference": reference if reference else None,
                 "description": description if description else None
             }
             
@@ -1393,108 +2066,136 @@ elif "Stock" in module:
     with tab2:
         st.subheader("État du Stock")
         
-        col1, col2, col3 = st.columns([2, 1, 1])
+        col1, col2 = st.columns([3, 1])
         
         with col1:
             search_item = st.text_input("Rechercher un article", placeholder="ID ou nom...")
         
         with col2:
-            show_low_stock = st.checkbox("Stock faible uniquement")
-        
-        with col3:
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("Actualiser", key="refresh_stock", use_container_width=True):
                 st.rerun()
         
-        params = {"low_stock_only": show_low_stock}
-        success, stock_items = api_call("GET", "/stock/items", params=params)
+        # Obtenir tous les articles
+        success, stock_items = api_call("GET", "/stock/items")
         
-        if success and stock_items:
-            df_stock = pd.DataFrame(stock_items)
+        if not success:
+            st.error(f"Erreur lors de la récupération des articles: {stock_items}")
+        elif stock_items is None:
+            st.warning("Aucune donnée reçue du serveur")
+        elif isinstance(stock_items, list) and len(stock_items) == 0:
+            st.info("Aucun article en stock pour le moment")
+        elif success and stock_items:
+            try:
+                df_stock = pd.DataFrame(stock_items)
             
-            # Filtrage par recherche
-            if search_item:
-                df_stock = df_stock[
-                    df_stock["item_id"].str.contains(search_item, case=False, na=False) |
-                    df_stock["item_name"].str.contains(search_item, case=False, na=False)
-                ]
+                # Vérifier que les colonnes nécessaires existent
+                required_cols = ["item_id", "item_name", "quantity", "unit", "unit_price", "min_threshold"]
+                missing_cols = [col for col in required_cols if col not in df_stock.columns]
+                if missing_cols:
+                    st.error(f"Colonnes manquantes dans les données: {', '.join(missing_cols)}")
+                    st.json(stock_items[0] if stock_items else {})  # Afficher un exemple
+                else:
+                    # Filtrage par recherche
+                    if search_item:
+                        df_stock = df_stock[
+                            df_stock["item_id"].str.contains(search_item, case=False, na=False) |
+                            df_stock["item_name"].str.contains(search_item, case=False, na=False)
+                        ]
+                    
+                    # Calcul valeur totale
+                    df_stock["valeur_totale"] = df_stock["quantity"] * df_stock["unit_price"]
+                    df_stock["is_low_stock"] = df_stock["quantity"] < df_stock["min_threshold"]
             
-            # Calcul valeur totale
-            df_stock["valeur_totale"] = df_stock["quantity"] * df_stock["unit_price"]
+                    # Métriques
+                    col1, col2, col3, col4 = st.columns(4)
+                    with col1:
+                        st.metric("Articles", len(df_stock))
+                    with col2:
+                        total_qty = df_stock["quantity"].sum()
+                        st.metric("Quantité Totale", f"{total_qty:.0f}")
+                    with col3:
+                        total_value = df_stock["valeur_totale"].sum()
+                        st.metric("Valeur Stock", f"{total_value:,.0f} €")
+                    with col4:
+                        low_stock_count = len(df_stock[df_stock["is_low_stock"]])
+                        st.metric("Alertes", low_stock_count, delta=f"-{low_stock_count}" if low_stock_count > 0 else "0", delta_color="inverse")
+                    
+                    st.markdown("")
+                    st.write("### Tous les Articles du Stock")
             
-            # Métriques
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                st.metric("Articles", len(df_stock))
-            with col2:
-                total_qty = df_stock["quantity"].sum()
-                st.metric("Quantité Totale", f"{total_qty:.0f}")
-            with col3:
-                total_value = df_stock["valeur_totale"].sum()
-                st.metric("Valeur Stock", f"{total_value:,.0f} €")
-            with col4:
-                low_stock = df_stock[df_stock["quantity"] < df_stock["min_threshold"]]
-                st.metric("Alertes", len(low_stock), delta=f"-{len(low_stock)}" if len(low_stock) > 0 else "0", delta_color="inverse")
-            
-            st.markdown("")
-            
-            # Tableau
-            st.dataframe(
-                df_stock[["item_id", "item_name", "quantity", "unit", "unit_price", "min_threshold", "valeur_totale"]],
-                use_container_width=True,
-                column_config={
-                    "item_id": "Référence",
-                    "item_name": "Nom",
-                    "quantity": st.column_config.NumberColumn("Quantité", format="%.0f"),
-                    "unit": "Unité",
-                    "unit_price": st.column_config.NumberColumn("Prix Unit. (€)", format="%.2f"),
-                    "min_threshold": st.column_config.NumberColumn("Seuil Min", format="%.0f"),
-                    "valeur_totale": st.column_config.NumberColumn("Valeur Totale (€)", format="%.2f")
-                },
-                hide_index=True
-            )
-            
-            # Export
-            csv = df_stock.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="Exporter en CSV",
-                data=csv,
-                file_name=f"stock_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv",
-            )
-            
-            st.markdown("")
-            
-            # Alertes stock faible
-            if not low_stock.empty:
-                st.warning(f"**{len(low_stock)} article(s) en stock faible!**")
-                
-                with st.expander("Voir les articles en alerte"):
-                    for _, item in low_stock.iterrows():
-                        col1, col2, col3 = st.columns([2, 1, 1])
-                        with col1:
-                            st.error(f"**{item['item_id']}** - {item['item_name']}")
-                        with col2:
-                            st.write(f"Stock: {item['quantity']:.0f} {item['unit']}")
-                        with col3:
-                            st.write(f"Seuil: {item['min_threshold']:.0f}")
-            
-            # Graphique Top 10 valeur
-            st.markdown("### Top 10 Articles par Valeur")
-            top10 = df_stock.nlargest(10, 'valeur_totale')
-            fig = px.bar(
-                top10,
-                x='item_id',
-                y='valeur_totale',
-                title='Top 10 Articles par Valeur',
-                labels={'item_id': 'Article', 'valeur_totale': 'Valeur (€)'},
-                color='valeur_totale',
-                color_continuous_scale='Teal'
-            )
-            fig = style_chart(fig)
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.info("Aucun article en stock")
+                    # Préparer les colonnes pour l'affichage
+                    df_display = df_stock[["item_id", "item_name", "quantity", "unit", "unit_price", "valeur_totale", "is_low_stock", "min_threshold"]].copy()
+                    
+                    # Créer la colonne d'affichage pour la quantité avec indicateur
+                    df_display["qty_display"] = df_display.apply(
+                        lambda row: f"[LOW] {row['quantity']:.0f}" if row['is_low_stock'] else f"[OK] {row['quantity']:.0f}",
+                        axis=1
+                    )
+                    
+                    # Tableau avec Streamlit dataframe
+                    st.dataframe(
+                        df_display[["item_id", "item_name", "qty_display", "unit", "unit_price", "valeur_totale"]].rename(columns={
+                            "item_id": "Référence",
+                            "item_name": "Nom",
+                            "qty_display": "Quantité",
+                            "unit": "Unité",
+                            "unit_price": "Prix Unitaire (€)",
+                            "valeur_totale": "Valeur (€)"
+                        }),
+                        use_container_width=True,
+                        column_config={
+                            "Référence": st.column_config.TextColumn("Référence", width="small"),
+                            "Nom": st.column_config.TextColumn("Nom", width="medium"),
+                            "Quantité": st.column_config.TextColumn("Quantité", width="small"),
+                            "Unité": st.column_config.TextColumn("Unité", width="small"),
+                            "Prix Unitaire (€)": st.column_config.NumberColumn("Prix Unitaire (€)", format="%.2f", width="small"),
+                            "Valeur (€)": st.column_config.NumberColumn("Valeur (€)", format="%.2f", width="small")
+                        },
+                        hide_index=True
+                    )
+                    
+                    st.markdown("")
+                    
+                    # Boutons de suppression pour les articles en stock faible
+                    if df_display["is_low_stock"].any():
+                        st.markdown("#### Articles en stock faible")
+                        low_stock_df = df_display[df_display["is_low_stock"]]
+                        
+                        for idx, item in low_stock_df.iterrows():
+                            col1, col2, col3 = st.columns([2, 2, 1])
+                            with col1:
+                                st.write(f"**{item['item_id']}** - {item['item_name']}")
+                            with col2:
+                                st.write(f"Quantité: {item['quantity']:.0f} {item['unit']} (Seuil: {item['min_threshold']:.0f})")
+                            with col3:
+                                if st.button(
+                                    label="Supprimer",
+                                    key=f"delete_{item['item_id']}_{idx}",
+                                    help=f"Supprimer {item['item_id']}",
+                                    use_container_width=True
+                                ):
+                                    success_del, result_del = api_call("DELETE", f"/stock/items/{item['item_id']}")
+                                    
+                                    if success_del:
+                                        st.success(f"{item['item_id']} supprimé!")
+                                        st.rerun()
+                                    else:
+                                        st.error(f"Erreur: {result_del}")
+                    
+                    st.markdown("---")
+                    
+                    # Export
+                    csv = df_stock[["item_id", "item_name", "quantity", "unit", "unit_price", "min_threshold", "valeur_totale"]].to_csv(index=False).encode('utf-8')
+                    st.download_button(
+                        label="Exporter en CSV",
+                        data=csv,
+                        file_name=f"stock_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        mime="text/csv",
+                    )
+            except Exception as e:
+                st.error(f"Erreur lors du traitement des données: {str(e)}")
+                st.exception(e)
     
     with tab3:
         st.subheader("Historique des Mouvements")
@@ -1526,7 +2227,15 @@ elif "Stock" in module:
         
         if success and movements:
             df_mov = pd.DataFrame(movements)
-            df_mov["created_at"] = pd.to_datetime(df_mov["created_at"]).dt.strftime("%Y-%m-%d %H:%M")
+            # Convertir les dates ISO8601 (peut contenir "Z" pour UTC)
+            try:
+                df_mov["created_at"] = pd.to_datetime(df_mov["created_at"], errors='coerce', utc=True)
+                mask = df_mov["created_at"].notna()
+                df_mov.loc[mask, "created_at"] = df_mov.loc[mask, "created_at"].dt.strftime("%Y-%m-%d %H:%M")
+                df_mov.loc[~mask, "created_at"] = "Date invalide"
+            except Exception:
+                # Si la conversion échoue, garder les valeurs originales
+                pass
             
             # Métriques
             col1, col2, col3, col4 = st.columns(4)
@@ -1576,8 +2285,9 @@ elif "Stock" in module:
             
             with col1:
                 # Évolution temporelle
-                df_mov_chart = df_mov.copy()
-                df_mov_chart["date"] = pd.to_datetime(df_mov_chart["created_at"])
+                # Recréer le DataFrame avec les dates originales pour le graphique
+                df_mov_chart = pd.DataFrame(movements)
+                df_mov_chart["date"] = pd.to_datetime(df_mov_chart["created_at"], errors='coerce', utc=True)
                 df_mov_chart = df_mov_chart.sort_values("date")
                 
                 fig = px.line(
@@ -1598,7 +2308,7 @@ elif "Stock" in module:
                     values=type_totals.values,
                     names=type_totals.index,
                     title="Répartition Entrées/Sorties",
-                    color_discrete_sequence=["#06b6d4", "#0891b2"]
+                    color_discrete_sequence=["#64748b", "#475569"]
                 )
                 fig2 = style_chart(fig2)
                 st.plotly_chart(fig2, use_container_width=True)

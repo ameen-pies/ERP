@@ -38,6 +38,7 @@ async def create_stock_item(item: StockItemCreate):
         "unit": item.unit,
         "min_threshold": item.min_threshold,
         "unit_price": item.unit_price,
+        "department": item.department,
         "created_at": now,
         "last_updated": now
     }
@@ -47,22 +48,121 @@ async def create_stock_item(item: StockItemCreate):
     
     return convert_objectid_to_str(item_doc)
 
-@router.get("/items", response_model=List[StockItemResponse])
+@router.get("/items")
 async def get_all_stock_items(low_stock_only: bool = False):
     """Récupération de tous les articles en stock"""
-    db = get_database()
-    
-    query = {}
-    if low_stock_only:
-        # MongoDB aggregation to compare quantity with min_threshold
+    try:
+        db = get_database()
+        
+        if low_stock_only:
+            # MongoDB aggregation to compare quantity with min_threshold
+            cursor = db.stock.find({})
+            items = await cursor.to_list(length=None)
+            if items:
+                items = [item for item in items if item.get("quantity", 0) < item.get("min_threshold", 0)]
+        else:
+            cursor = db.stock.find({})
+            items = await cursor.to_list(length=None)
+        
+        if not items:
+            return []
+        
+        # Convertir tous les articles et s'assurer que tous les champs requis sont présents
+        result = []
+        for item in items:
+            try:
+                # Convertir ObjectId en string d'abord
+                converted = convert_objectid_to_str(item.copy() if isinstance(item, dict) else dict(item))
+                
+                # Extraire les valeurs en gérant les cas où les champs manquent
+                item_id_val = converted.get("item_id")
+                if not item_id_val:
+                    continue  # Ignorer les items sans item_id
+                
+                # Gérer les dates
+                created_at = converted.get("created_at")
+                if created_at is None:
+                    created_at = datetime.utcnow()
+                elif not isinstance(created_at, datetime):
+                    try:
+                        # Essayer de convertir en datetime si c'est une string
+                        if isinstance(created_at, str):
+                            created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                        else:
+                            created_at = datetime.utcnow()
+                    except:
+                        created_at = datetime.utcnow()
+                
+                last_updated = converted.get("last_updated")
+                if last_updated is None:
+                    last_updated = created_at
+                elif not isinstance(last_updated, datetime):
+                    try:
+                        if isinstance(last_updated, str):
+                            last_updated = datetime.fromisoformat(last_updated.replace('Z', '+00:00'))
+                        else:
+                            last_updated = created_at
+                    except:
+                        last_updated = created_at
+                
+                # Construire le dictionnaire de réponse avec tous les champs requis
+                final_item = {
+                    "id": converted.get("id") or f"STK-{uuid.uuid4().hex[:8].upper()}",
+                    "item_id": item_id_val,
+                    "item_name": converted.get("item_name") or f"Article {item_id_val}",
+                    "quantity": float(converted.get("quantity", 0.0)),
+                    "unit": converted.get("unit", "pcs"),
+                    "min_threshold": float(converted.get("min_threshold", 10.0)),
+                    "unit_price": float(converted.get("unit_price", 0.0)),
+                    "department": converted.get("department", "GENERAL"),
+                    "created_at": created_at.isoformat() if isinstance(created_at, datetime) else str(created_at),
+                    "last_updated": last_updated.isoformat() if isinstance(last_updated, datetime) else str(last_updated)
+                }
+                
+                result.append(final_item)
+            except Exception as e:
+                # Logger l'erreur et continuer avec les autres items
+                import traceback
+                print(f"Erreur lors de la conversion de l'article: {e}")
+                traceback.print_exc()
+                continue
+        
+        return result
+    except Exception as e:
+        import traceback
+        error_detail = f"Erreur lors de la récupération des articles: {str(e)}"
+        print(f"[ERROR] {error_detail}")
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_detail
+        )
+
+@router.get("/debug/items-raw")
+async def debug_stock_items():
+    """DEBUG: Voir les articles bruts en base"""
+    try:
+        db = get_database()
         cursor = db.stock.find({})
         items = await cursor.to_list(length=None)
-        items = [item for item in items if item["quantity"] < item["min_threshold"]]
-    else:
-        cursor = db.stock.find({})
-        items = await cursor.to_list(length=None)
-    
-    return [convert_objectid_to_str(item) for item in items]
+        
+        # Convertir les ObjectId en strings pour la sérialisation JSON
+        serializable_items = []
+        for item in items or []:
+            serializable_item = convert_objectid_to_str(item.copy() if isinstance(item, dict) else dict(item))
+            serializable_items.append(serializable_item)
+        
+        return {
+            "total": len(serializable_items),
+            "items": serializable_items
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur debug: {str(e)}"
+        )
 
 @router.get("/items/{item_id}", response_model=StockItemResponse)
 async def get_stock_item(item_id: str):
@@ -101,6 +201,7 @@ async def receive_stock(movement: StockMovementCreate):
             "unit": "pcs",
             "min_threshold": 10.0,
             "unit_price": movement.unit_price,
+            "department": "GENERAL",
             "created_at": now,
             "last_updated": now
         }
@@ -277,6 +378,40 @@ async def get_accounting_journal(limit: int = 100):
         }
         for e in entries
     ]
+
+@router.delete("/items/{item_id}")
+async def delete_stock_item(item_id: str):
+    """Suppression d'un article en stock"""
+    db = get_database()
+    
+    item = await db.stock.find_one({"item_id": item_id})
+    
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Article {item_id} non trouvé"
+        )
+    
+    # Vérifier si c'est un article en stock faible
+    if item["quantity"] >= item["min_threshold"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"La suppression n'est autorisée que pour les articles en stock faible. Stock actuel: {item['quantity']}, Seuil: {item['min_threshold']}"
+        )
+    
+    result = await db.stock.delete_one({"item_id": item_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la suppression"
+        )
+    
+    return {
+        "success": True,
+        "message": f"Article {item_id} supprimé avec succès",
+        "deleted_item": convert_objectid_to_str(item)
+    }
 
 @router.get("/projects/{project_id}")
 async def get_project_costs(project_id: str):

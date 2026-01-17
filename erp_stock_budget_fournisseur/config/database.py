@@ -58,6 +58,10 @@ def init_db():
     
     # Create indexes for better performance
     try:
+        # Departments collection indexes
+        db.departments.create_index("code", unique=True)
+        db.departments.create_index("status")
+        
         # Suppliers collection indexes
         db.suppliers.create_index("tax_id", unique=True)
         db.suppliers.create_index("status")

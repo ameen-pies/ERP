@@ -27,6 +27,11 @@ class MovementType(str, Enum):
     OUT = "OUT"
     ADJUSTMENT = "ADJUSTMENT"
 
+class DepartmentStatus(str, Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+    SUSPENDED = "SUSPENDED"
+
 # ==================== PYDANTIC MODELS (Validation) ====================
 
 class SupplierBase(BaseModel):
@@ -51,6 +56,31 @@ class SupplierResponse(SupplierBase):
     class Config:
         from_attributes = True
 
+class DepartmentBase(BaseModel):
+    name: str = Field(..., min_length=2, max_length=200)
+    code: str = Field(..., min_length=1, max_length=10)
+    manager: Optional[str] = None
+    email: Optional[str] = None
+    description: Optional[str] = None
+
+class DepartmentCreate(DepartmentBase):
+    pass
+
+class DepartmentUpdate(BaseModel):
+    name: Optional[str] = None
+    manager: Optional[str] = None
+    email: Optional[str] = None
+    description: Optional[str] = None
+
+class DepartmentResponse(DepartmentBase):
+    id: str
+    status: str
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
 class BudgetBase(BaseModel):
     department: str = Field(..., min_length=2)
     allocated: float = Field(..., gt=0)
@@ -58,6 +88,11 @@ class BudgetBase(BaseModel):
 
 class BudgetCreate(BudgetBase):
     pass
+
+class BudgetUpdate(BaseModel):
+    """Modèle pour mettre à jour un budget"""
+    allocated: Optional[float] = Field(None, gt=0)
+    used: Optional[float] = Field(None, ge=0)
 
 class BudgetResponse(BudgetBase):
     id: str
@@ -88,6 +123,7 @@ class StockItemBase(BaseModel):
     unit: str = Field(default="pcs")
     min_threshold: float = Field(default=10.0, ge=0)
     unit_price: float = Field(default=0.0, ge=0)
+    department: str = Field(..., min_length=2)
 
 class StockItemCreate(StockItemBase):
     pass

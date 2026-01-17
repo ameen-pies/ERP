@@ -53,23 +53,39 @@ async def create_supplier(supplier: SupplierCreate):
     
     return convert_objectid_to_str(supplier_doc)
 
-@router.get("/", response_model=List[SupplierResponse])
+@router.get("/")
 async def get_all_suppliers(
     status_filter: str = None,
     skip: int = 0,
     limit: int = 100
 ):
     """Récupération de la liste des fournisseurs avec filtres"""
-    db = get_database()
-    
-    query = {}
-    if status_filter:
-        query["status"] = status_filter
-    
-    cursor = db.suppliers.find(query).skip(skip).limit(limit)
-    suppliers = await cursor.to_list(length=limit)
-    
-    return [convert_objectid_to_str(s) for s in suppliers]
+    try:
+        db = get_database()
+        
+        query = {}
+        if status_filter:
+            query["status"] = status_filter
+        
+        cursor = db.suppliers.find(query).skip(skip).limit(limit)
+        suppliers = await cursor.to_list(length=limit)
+        
+        # Convertir les documents MongoDB en dictionnaires sérialisables
+        result = []
+        for supplier in suppliers:
+            converted = convert_objectid_to_str(supplier)
+            result.append(converted)
+        
+        return result
+    except Exception as e:
+        import traceback
+        error_msg = f"Erreur lors de la récupération des fournisseurs: {str(e)}"
+        print(f"[ERROR] {error_msg}")
+        print(traceback.format_exc())
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_msg
+        )
 
 @router.get("/{supplier_id}", response_model=SupplierResponse)
 async def get_supplier(supplier_id: str):
