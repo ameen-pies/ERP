@@ -15,7 +15,7 @@ MONGO_URI = os.getenv(
 )
 
 # Database name
-DATABASE_NAME = os.getenv("DATABASE_NAME", "purchase_request")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
 
 # Global client and database instances
 client: Optional[AsyncIOMotorClient] = None
