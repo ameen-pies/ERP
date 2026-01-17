@@ -6,7 +6,7 @@
 
 ## 📋 Table of Contents
 
-- [Prerequisites](#-prerequisites)
+- System Architecture
 - [Installation](#-installation)
 - [Module Execution](#-module-execution)
 - [System Architecture](#-system-architecture)
@@ -16,21 +16,25 @@
 
 ---
 
-## ✅ Prerequisites
-```bash
-Python 3.10+
-MongoDB Atlas Account
-Node.js (optional, for workflow enhancements)
-```
 
----
+## System Architecture
 
-## 🚀 Installation
+| Module | Purpose | Port(s) |
+|--------|---------|---------|
+| **Login** | Authentication & Dashboard | `8501` |
+| **Product Request** | PR Creation & Management | `8050` |
+| **Purchase Order** | PO Generation & Tracking | `8000` |
+| **Approval Workflow** | Multi-level Validations | `8001` |
+| **Facturation** | Invoice OCR & Processing | `8000` |
+| **GRN** | Goods Receipt & Disputes | `8000/8501` |
+| **Stock-Budget** | Inventory & Finance Control | `8000/8501` |
+
+## Installation
 
 ### 1️⃣ Clone Repository
 ```bash
-git clone <your-repo-url>
-cd <repo-name>
+it clone https://github.com/ameen-pies/ERP
+cd ERP
 ```
 
 ### 2️⃣ Setup Virtual Environment
@@ -60,7 +64,7 @@ MONGO_DB_NAME=purchase_request
 
 ## 🎯 Module Execution
 
-### 🔐 Login Module *(Start Here)*
+### 🔐 Login Module (first page)
 ```bash
 cd login
 streamlit run app.py
@@ -155,27 +159,6 @@ xdg-open index.html       # Linux
 
 **Or access directly:** [`login/index.html`](login/index.html)
 
-> ✨ **The `index.html` dashboard provides:**
-> - 🏠 Centralized navigation to all running modules
-> - 🔗 Seamless switching between Purchase Requests, Orders, Approvals, etc.
-> - 👤 Role-based module access (User/Head/Treasurer/Admin)
-> - 📊 Integrated iframe views of all active modules
-> - ✅ Real-time status indicators for each service
-
-> ⚠️ **Important**: All module servers must be running for full platform functionality.
-
-## 🏗️ System Architecture
-
-| Module | Purpose | Port(s) |
-|--------|---------|---------|
-| 🔐 **Login** | Authentication & Dashboard | `8501` |
-| 📝 **Product Request** | PR Creation & Management | `8050` |
-| 🛒 **Purchase Order** | PO Generation & Tracking | `8000` |
-| ✅ **Approval Workflow** | Multi-level Validations | `8001` |
-| 🧾 **Facturation** | Invoice OCR & Processing | `8000` |
-| 📦 **GRN** | Goods Receipt & Disputes | `8000/8501` |
-| 📊 **Stock-Budget** | Inventory & Finance Control | `8000/8501` |
-
 ---
 
 ## 👥 Default Users
@@ -209,52 +192,11 @@ xdg-open index.html       # Linux
 
 **Workflow Engine**
 - Custom approval system
-
----
-
-## 🐛 Troubleshooting
-
-### Port Conflicts
-```bash
-# Windows
-netstat -ano | findstr :<PORT>
-taskkill /PID <PID> /F
-
-# Linux/Mac
-lsof -ti:<PORT> | xargs kill -9
-```
-
-### MongoDB Connection Issues
-```bash
-# Verify connection string in .env
-# Check network connectivity
-# Whitelist IP in MongoDB Atlas
-```
-
-### Missing Dependencies
-```bash
-# Reinstall in each module
-cd <module-folder>
-pip install -r requirements.txt
-```
-
 ---
 
 ## 🎥 Demo
 
 See **`Demo video.mp4`** for complete system walkthrough
-
----
-
-## 📄 License
-
-MIT License
-
----
-
-## 🤝 Contributing
-
-Pull requests welcome. For major changes, open an issue first.
 
 ---
 
