@@ -142,6 +142,27 @@ cd erp_stock_budget_fournisseur
 **UI:** [`http://localhost:8501`](http://localhost:8501)
 
 ---
+### Access the Integrated Platform
+
+Once all modules are running, open the unified platform:
+```bash
+cd login
+# Open index.html in your browser
+start index.html          # Windows
+open index.html           # Mac
+xdg-open index.html       # Linux
+```
+
+**Or access directly:** [`login/index.html`](login/index.html)
+
+> ✨ **The `index.html` dashboard provides:**
+> - 🏠 Centralized navigation to all running modules
+> - 🔗 Seamless switching between Purchase Requests, Orders, Approvals, etc.
+> - 👤 Role-based module access (User/Head/Treasurer/Admin)
+> - 📊 Integrated iframe views of all active modules
+> - ✅ Real-time status indicators for each service
+
+> ⚠️ **Important**: All module servers must be running for full platform functionality.
 
 ## 🏗️ System Architecture
 
