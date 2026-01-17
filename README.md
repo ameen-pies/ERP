@@ -1,4 +1,4 @@
-# 🏢 ERP System
+# ERP Purchase model
 
 > A comprehensive enterprise resource planning system with integrated modules for purchase management, approval workflows, and document processing.
 
