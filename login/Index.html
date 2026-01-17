@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ePurchase - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        /* Horizontal Navigation Bar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a56db;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            color: #1a56db;
+            background: rgba(26, 86, 219, 0.1);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar-nav {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-details-nav {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-nav {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .user-role-nav {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .logout-btn-nav {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .logout-btn-nav:hover {
+            background: #fecaca;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 3rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .main-content.full-width {
+            padding: 0;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 4px 20px rgba(65, 105, 225, 0.3);
+        }
+
+        .main-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .main-header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        /* Landing Page Cards */
+        .landing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .module-card {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: #d1d5db;
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.25rem;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .module-card:hover .card-icon {
+            transform: scale(1.05);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Module Content Area */
+        .module-container {
+            display: none;
+            background: white;
+            margin-top: 0;
+            overflow: hidden;
+        }
+
+        .module-container.active {
+            display: block;
+        }
+
+        .module-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tabs {
+            display: flex;
+            background: #f9fafb;
+            border-bottom: 2px solid #e5e7eb;
+            padding: 0 2rem;
+            position: sticky;
+            top: 68px;
+            z-index: 100;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #111827;
+        }
+
+        .tab.active {
+            color: #4169E1;
+            border-bottom-color: #4169E1;
+        }
+
+        .iframe-content {
+            min-height: calc(100vh - 200px);
+            overflow: hidden;
+        }
+
+        .iframe-content iframe {
+            width: 100%;
+            height: calc(100vh - 200px);
+            min-height: 800px;
+            border: none;
+            display: block;
+        }
+
+        .module-placeholder {
+            padding: 4rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .module-placeholder h2 {
+            color: #111827;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .main-header h1 {
+                font-size: 2rem;
+            }
+
+            .landing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Horizontal Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-brand" onclick="showLandingPage()">
+            🏢 ePurchase
+        </div>
+        <div class="nav-links" id="nav-links">
+            <!-- Navigation items will be dynamically generated -->
+        </div>
+        <div class="user-section">
+            <div class="user-info-nav">
+                <div class="user-avatar-nav" id="user-avatar-nav">U</div>
+                <div class="user-details-nav">
+                    <div class="user-name-nav" id="user-name-nav">User</div>
+                    <div class="user-role-nav" id="user-role-nav">Role</div>
+                </div>
+            </div>
+            <button class="logout-btn-nav" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Landing Page -->
+        <div id="landing-page">
+            <div class="main-header">
+                <h1>Purchase Module</h1>
+                <p>Plateforme de Gestion Intégrée</p>
+            </div>
+
+            <div class="landing-grid" id="cards-grid">
+                <!-- Cards will be dynamically generated here -->
+            </div>
+        </div>
+
+        <!-- Module Content -->
+        <div class="module-container" id="module-container">
+            <div class="module-header">
+                <h1 class="module-title" id="module-title">Module</h1>
+                <button class="back-btn" onclick="showLandingPage()">← Back to Home</button>
+            </div>
+            <div class="tabs" id="tabs" style="display: none;">
+                <button class="tab active" data-tab="purchase-order">Purchase Order</button>
+                <button class="tab" data-tab="approval">Approval Workflow</button>
+            </div>
+            <div class="iframe-content" id="iframe-content">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get user role from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const userRole = urlParams.get('role') || 'user';
+        const userName = urlParams.get('name') || 'User';
+        
+        // Store user role
+        localStorage.setItem('userRole', userRole);
+        localStorage.setItem('userName', userName);
+
+        // Role display names
+        const roleNames = {
+            'user': 'Department User',
+            'head': 'Department Head',
+            'treasurer': 'Treasurer',
+            'admin': 'Administrator'
+        };
+
+        // Update user info in navbar
+        document.getElementById('user-name-nav').textContent = userName;
+        document.getElementById('user-role-nav').textContent = roleNames[userRole] || 'User';
+        document.getElementById('user-avatar-nav').textContent = userName.charAt(0).toUpperCase();
+
+        // Module definitions
+        const modules = {
+            'dashboard': {
+                title: 'Dashboard',
+                description: 'View analytics, reports, and key metrics for your organization',
+                icon: '📊',
+                url: null,
+                roles: ['admin']
+            },
+            'product-request': {
+                title: 'Purchase Request',
+                description: 'Create and manage purchase requests across departments',
+                icon: '📝',
+                url: null,
+                roles: ['admin', 'user', 'head', 'treasurer']
+            },
+            'purchase-order': {
+                title: 'Purchase Order',
+                description: 'Create and track purchase orders with approval workflows',
+                icon: '🛒',
+                url: 'http://localhost:5500/erp-purchase-order/',
+                hasTabs: true,
+                tabs: {
+                    'purchase-order': 'http://localhost:5500/erp-purchase-order/',
+                    'approval': 'http://localhost:8001/ui.html?workflow=WF-151BAB29'
+                },
+                roles: ['admin', 'user', 'head', 'treasurer']
+            },
+            'grn': {
+                title: 'Goods Receipt Notes',
+                description: 'Record and verify received goods and inventory',
+                icon: '📥',
+                url: null,
+                roles: ['admin', 'user', 'head', 'treasurer']
+            },
+            'facturation': {
+                title: 'Scan Receipts',
+                description: 'Digitize and process receipts using OCR technology',
+                icon: '🧾',
+                url: 'http://localhost:8501',
+                roles: ['admin', 'user', 'head', 'treasurer']
+            },
+            'suppliers': {
+                title: 'Suppliers Database',
+                description: 'Manage supplier information, contracts, and relationships',
+                icon: '🏢',
+                url: 'http://localhost:8501',
+                roles: ['admin', 'user', 'head', 'treasurer']
+            }
+        };
+
+        const landingPage = document.getElementById('landing-page');
+        const moduleContainer = document.getElementById('module-container');
+        const moduleTitle = document.getElementById('module-title');
+        const iframeContent = document.getElementById('iframe-content');
+        const tabsContainer = document.getElementById('tabs');
+        const tabButtons = document.querySelectorAll('.tab');
+        const cardsGrid = document.getElementById('cards-grid');
+        const navLinks = document.getElementById('nav-links');
+
+        let currentModule = null;
+
+        // Generate navigation links
+        function generateNavLinks() {
+            navLinks.innerHTML = '';
+            
+            Object.keys(modules).forEach(moduleKey => {
+                const module = modules[moduleKey];
+                
+                if (!module.roles.includes(userRole)) {
+                    return;
+                }
+                
+                const link = document.createElement('a');
+                link.className = 'nav-link';
+                link.textContent = `${module.icon} ${module.title}`;
+                link.href = '#';
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadModule(moduleKey);
+                });
+                
+                navLinks.appendChild(link);
+            });
+        }
+
+        // Generate landing page cards
+        function generateLandingCards() {
+            cardsGrid.innerHTML = '';
+            
+            Object.keys(modules).forEach(moduleKey => {
+                const module = modules[moduleKey];
+                
+                if (!module.roles.includes(userRole)) {
+                    return;
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'module-card';
+                
+                card.innerHTML = `
+                    <div class="card-icon">${module.icon}</div>
+                    <div class="card-title">${module.title}</div>
+                    <div class="card-description">${module.description}</div>
+                `;
+                
+                card.addEventListener('click', () => loadModule(moduleKey));
+                cardsGrid.appendChild(card);
+            });
+        }
+
+        // Load module
+        function loadModule(moduleKey) {
+            const module = modules[moduleKey];
+            currentModule = module;
+            
+            // Hide landing page, show module container
+            landingPage.style.display = 'none';
+            moduleContainer.classList.add('active');
+            document.querySelector('.main-content').classList.add('full-width');
+            
+            // Update title
+            moduleTitle.textContent = module.title;
+            
+            // Load content
+            if (module.hasTabs) {
+                tabsContainer.style.display = 'flex';
+                tabButtons.forEach(tab => tab.classList.remove('active'));
+                tabButtons[0].classList.add('active');
+                loadContent(module.tabs['purchase-order']);
+            } else {
+                tabsContainer.style.display = 'none';
+                if (module.url) {
+                    loadContent(module.url);
+                } else {
+                    showModulePlaceholder(module.title);
+                }
+            }
+        }
+
+        // Show landing page
+        function showLandingPage() {
+            landingPage.style.display = 'block';
+            moduleContainer.classList.remove('active');
+            document.querySelector('.main-content').classList.remove('full-width');
+            currentModule = null;
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.parent.postMessage({type: 'logout'}, '*');
+            }
+        }
+
+        // Handle tab switching
+        tabButtons.forEach(tab => {
+            tab.addEventListener('click', function() {
+                if (!currentModule || !currentModule.hasTabs) return;
+                
+                tabButtons.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabName = this.dataset.tab;
+                const url = currentModule.tabs[tabName];
+                loadContent(url);
+            });
+        });
+
+        function loadContent(url) {
+            iframeContent.innerHTML = `<iframe src="${url}"></iframe>`;
+        }
+
+        function showModulePlaceholder(title) {
+            iframeContent.innerHTML = `
+                <div class="module-placeholder">
+                    <h2>${title}</h2>
+                    <p>This module is under development</p>
+                </div>
+            `;
+        }
+
+        // Listen for messages from iframes
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.action === 'switchTab') {
+                const tabName = event.data.tab;
+                
+                if (currentModule && currentModule.hasTabs) {
+                    const targetTab = Array.from(tabButtons).find(t => t.dataset.tab === tabName);
+                    if (targetTab) {
+                        tabButtons.forEach(t => t.classList.remove('active'));
+                        targetTab.classList.add('active');
+                        
+                        const url = currentModule.tabs[tabName];
+                        loadContent(url);
+                    }
+                }
+            }
+        });
+
+        // Initialize
+        generateNavLinks();
+        generateLandingCards();
+    </script>
+</body>
+</html>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP - Gestion des Bons de Commande</title>
+    <title>ERP - Purchase Order Management</title>
     <style>
         * {
             margin: 0;
@@ -68,7 +68,7 @@
             color: #2a4d8f;
             font-size: 1.8em;
             margin-bottom: 20px;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 3px solid #4169E1;
             padding-bottom: 10px;
         }
 
@@ -105,8 +105,8 @@
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #4169E1;
+            box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
         }
 
         .lignes-container {
@@ -136,7 +136,7 @@
         }
 
         .ligne-header h4 {
-            color: #667eea;
+            color: #4169E1;
             margin: 0;
         }
 
@@ -182,13 +182,13 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
             color: white;
         }
 
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(65, 105, 225, 0.4);
         }
 
         .btn-primary:disabled {
@@ -206,7 +206,7 @@
         }
 
         .total-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
             color: white;
             padding: 20px;
             border-radius: 10px;
@@ -231,7 +231,7 @@
         }
 
         thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
             color: white;
         }
 
@@ -315,58 +315,58 @@
 </head>
 <body>
     <header>
-        <h1>🏢 ERP - Gestion des Bons de Commande</h1>
-        <p>Créer et gérer les bons de commande multi-lignes
-            <span id="connection-status" class="status-indicator status-disconnected">● Déconnecté</span>
+        <h1>🏢 ERP - Purchase Order Management</h1>
+        <p>Create and manage multi-line purchase orders
+            <span id="connection-status" class="status-indicator status-disconnected">● Disconnected</span>
         </p>
     </header>
 
     <main>
-        <!-- Demandes d'achat -->
+        <!-- Purchase Requests -->
         <section class="card">
-            <h2>📋 Demandes d'Achat (DA)</h2>
+            <h2>📋 Purchase Requests (PR)</h2>
             <table id="da-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Demandeur</th>
-                        <th>Département</th>
+                        <th>Requester</th>
+                        <th>Department</th>
                         <th>Type</th>
-                        <th>Détails</th>
+                        <th>Details</th>
                         <th>Date</th>
-                        <th>Statut</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 20px; color: #6b7280;">
-                            Chargement...
+                            Loading...
                         </td>
                     </tr>
                 </tbody>
             </table>
         </section>
 
-        <!-- Créer un bon de commande -->
+        <!-- Create Purchase Order -->
         <section class="card">
-            <h2>➕ Créer un Bon de Commande</h2>
+            <h2>➕ Create a Purchase Order</h2>
             <form id="bc-form">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="linked_pr_id">Référence DA *</label>
+                        <label for="linked_pr_id">PR Reference *</label>
                         <select id="linked_pr_id" required>
-                            <option value="">Sélectionner une DA...</option>
+                            <option value="">Select a PR...</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="demandeur_nom">Demandeur *</label>
+                        <label for="demandeur_nom">Requester *</label>
                         <input type="text" id="demandeur_nom" required readonly>
                     </div>
 
                     <div class="form-group">
-                        <label for="demandeur_email">Email demandeur *</label>
+                        <label for="demandeur_email">Requester Email *</label>
                         <input type="email" id="demandeur_email" required readonly>
                     </div>
 
@@ -376,112 +376,112 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="manager_email">Email manager *</label>
+                        <label for="manager_email">Manager Email *</label>
                         <input type="email" id="manager_email" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="type_achat">Type d'achat *</label>
+                        <label for="type_achat">Purchase Type *</label>
                         <select id="type_achat" required>
-                            <option value="Produit">Produit</option>
+                            <option value="Produit">Product</option>
                             <option value="Service">Service</option>
-                            <option value="Mixte">Mixte</option>
+                            <option value="Mixte">Mixed</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="fournisseur_nom">Fournisseur *</label>
-                        <input type="text" id="fournisseur_nom" required placeholder="ex: Tech Supplies Inc">
+                        <label for="fournisseur_nom">Supplier *</label>
+                        <input type="text" id="fournisseur_nom" required placeholder="e.g. Tech Supplies Inc">
                     </div>
 
                     <div class="form-group">
-                        <label for="fournisseur_email">Email fournisseur</label>
-                        <input type="email" id="fournisseur_email" placeholder="contact@fournisseur.com">
+                        <label for="fournisseur_email">Supplier Email</label>
+                        <input type="email" id="fournisseur_email" placeholder="contact@supplier.com">
                     </div>
 
                     <div class="form-group">
-                        <label for="fournisseur_telephone">Téléphone fournisseur</label>
+                        <label for="fournisseur_telephone">Supplier Phone</label>
                         <input type="tel" id="fournisseur_telephone" placeholder="+216 XX XXX XXX">
                     </div>
 
                     <div class="form-group">
-                        <label for="priorite">Priorité *</label>
+                        <label for="priorite">Priority *</label>
                         <select id="priorite" required>
-                            <option value="Basse">Basse</option>
-                            <option value="Moyenne" selected>Moyenne</option>
-                            <option value="Haute">Haute</option>
+                            <option value="Basse">Low</option>
+                            <option value="Moyenne" selected>Medium</option>
+                            <option value="Haute">High</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="date_livraison">Date livraison souhaitée</label>
+                        <label for="date_livraison">Requested Delivery Date</label>
                         <input type="date" id="date_livraison">
                     </div>
 
                     <div class="form-group">
-                        <label for="mode_paiement">Mode de paiement</label>
+                        <label for="mode_paiement">Payment Method</label>
                         <select id="mode_paiement">
-                            <option value="Virement bancaire" selected>Virement bancaire</option>
-                            <option value="Chèque">Chèque</option>
-                            <option value="Espèces">Espèces</option>
-                            <option value="Carte bancaire">Carte bancaire</option>
+                            <option value="Virement bancaire" selected>Bank Transfer</option>
+                            <option value="Chèque">Check</option>
+                            <option value="Espèces">Cash</option>
+                            <option value="Carte bancaire">Credit Card</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group" style="grid-column: 1 / -1;">
-                    <label for="details_demande">Détails de la demande *</label>
-                    <textarea id="details_demande" rows="3" required placeholder="Description générale de la commande..."></textarea>
+                    <label for="details_demande">Request Details *</label>
+                    <textarea id="details_demande" rows="3" required placeholder="General description of the order..."></textarea>
                 </div>
 
                 <div class="form-group" style="grid-column: 1 / -1;">
                     <label for="justification">Justification *</label>
-                    <textarea id="justification" rows="2" required placeholder="Raison de cette commande..."></textarea>
+                    <textarea id="justification" rows="2" required placeholder="Reason for this order..."></textarea>
                 </div>
 
-                <!-- Lignes de commande -->
+                <!-- Order Lines -->
                 <div class="lignes-container">
-                    <h3 style="color: #2a4d8f; margin-bottom: 15px;">📦 Lignes de Commande</h3>
+                    <h3 style="color: #2a4d8f; margin-bottom: 15px;">📦 Order Lines</h3>
                     <div id="lignes-list"></div>
                     <button type="button" class="btn-add-ligne" onclick="ajouterLigne()">
-                        ➕ Ajouter une ligne
+                        ➕ Add a line
                     </button>
                 </div>
 
                 <!-- Total -->
                 <div class="total-display">
-                    <div style="margin-bottom: 5px;">Total HT: <span id="total-ht">0.000</span> TND</div>
-                    <div style="margin-bottom: 5px;">TVA (19%): <span id="total-tva">0.000</span> TND</div>
-                    <h3>Total TTC: <span class="montant" id="total-ttc">0.000</span> TND</h3>
+                    <div style="margin-bottom: 5px;">Total Excl. Tax: <span id="total-ht">0.000</span> TND</div>
+                    <div style="margin-bottom: 5px;">VAT (19%): <span id="total-tva">0.000</span> TND</div>
+                    <h3>Total Incl. Tax: <span class="montant" id="total-ttc">0.000</span> TND</h3>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="submit-btn">✅ Créer BC & Lancer l'approbation</button>
-                    <button type="reset" class="btn btn-secondary" onclick="resetForm()">🔄 Réinitialiser</button>
+                    <button type="submit" class="btn btn-primary" id="submit-btn">✅ Create PO & Start Approval</button>
+                    <button type="reset" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
                 </div>
             </form>
         </section>
 
-        <!-- Bons de commande -->
+        <!-- Purchase Orders -->
         <section class="card">
-            <h2>📦 Bons de Commande</h2>
+            <h2>📦 Purchase Orders</h2>
             <table id="bc-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Réf. DA</th>
-                        <th>Fournisseur</th>
-                        <th>Nb Lignes</th>
-                        <th>Total TTC</th>
+                        <th>PR Ref.</th>
+                        <th>Supplier</th>
+                        <th>Lines</th>
+                        <th>Total Incl. Tax</th>
                         <th>Date</th>
-                        <th>Statut</th>
+                        <th>Status</th>
                         <th>Workflow</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 20px; color: #6b7280;">
-                            Chargement...
+                            Loading...
                         </td>
                     </tr>
                 </tbody>
@@ -493,14 +493,30 @@
         const API_URL = "http://localhost:8000";
         let ws = null;
         let numeroLigne = 0;
-
+        document.addEventListener('click', function(e) {
+            // Check if clicked element is a workflow link
+            const link = e.target.closest('a[href*="ui.html?workflow="]');
+            
+            if (link && window.parent !== window) {
+                // We're in an iframe
+                e.preventDefault(); // Stop the link from opening
+                
+                // Send message to parent to switch tabs
+                window.parent.postMessage({
+                    action: 'switchTab',
+                    tab: 'approval'
+                }, '*');
+                
+                console.log('Sent tab switch message to parent');
+            }
+        });
         // WebSocket
         function connectWebSocket() {
             try {
                 ws = new WebSocket('ws://localhost:8000/ws');
                 
                 ws.onopen = () => {
-                    document.getElementById('connection-status').textContent = '● Connecté';
+                    document.getElementById('connection-status').textContent = '● Connected';
                     document.getElementById('connection-status').className = 'status-indicator status-connected';
                 };
                 
@@ -509,7 +525,7 @@
                     switch(message.type) {
                         case 'bc_cree':
                         case 'bc_resoumis':
-                            showNotification('BC mis à jour!', 'success');
+                            showNotification('PO updated!', 'success');
                             loadBonsCommande();
                             loadDemandesAchat();
                             break;
@@ -522,12 +538,12 @@
                 };
                 
                 ws.onclose = () => {
-                    document.getElementById('connection-status').textContent = '● Déconnecté';
+                    document.getElementById('connection-status').textContent = '● Disconnected';
                     document.getElementById('connection-status').className = 'status-indicator status-disconnected';
                     setTimeout(connectWebSocket, 3000);
                 };
             } catch (error) {
-                console.error('Erreur WebSocket:', error);
+                console.error('WebSocket error:', error);
             }
         }
 
@@ -539,7 +555,7 @@
             setTimeout(() => notification.remove(), 3000);
         }
 
-        // Ajouter une ligne
+        // Add a line
         function ajouterLigne() {
             numeroLigne++;
             const ligneDiv = document.createElement('div');
@@ -547,40 +563,40 @@
             ligneDiv.id = `ligne-${numeroLigne}`;
             ligneDiv.innerHTML = `
                 <div class="ligne-header">
-                    <h4>Ligne ${numeroLigne}</h4>
+                    <h4>Line ${numeroLigne}</h4>
                     <button type="button" class="btn-remove-ligne" onclick="supprimerLigne(${numeroLigne})">
-                        🗑️ Supprimer
+                        🗑️ Delete
                     </button>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Description *</label>
-                        <input type="text" class="ligne-description" required placeholder="ex: Ordinateur portable Dell">
+                        <input type="text" class="ligne-description" required placeholder="e.g. Dell Laptop">
                     </div>
                     <div class="form-group">
-                        <label>Quantité *</label>
+                        <label>Quantity *</label>
                         <input type="number" class="ligne-quantite" min="0.001" step="0.001" value="1" required onchange="calculerTotaux()">
                     </div>
                     <div class="form-group">
-                        <label>Unité *</label>
-                        <input type="text" class="ligne-unite" value="unité" required>
+                        <label>Unit *</label>
+                        <input type="text" class="ligne-unite" value="unit" required>
                     </div>
                     <div class="form-group">
-                        <label>Prix unitaire (TND) *</label>
+                        <label>Unit Price (TND) *</label>
                         <input type="number" class="ligne-prix" min="0" step="0.001" value="0" required onchange="calculerTotaux()">
                     </div>
                     <div class="form-group">
-                        <label>Montant ligne</label>
+                        <label>Line Amount</label>
                         <input type="text" class="ligne-montant" readonly value="0.000 TND">
                     </div>
                     <div class="form-group">
-                        <label>Référence catalogue</label>
-                        <input type="text" class="ligne-reference" placeholder="ex: REF-12345">
+                        <label>Catalog Reference</label>
+                        <input type="text" class="ligne-reference" placeholder="e.g. REF-12345">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Spécifications techniques</label>
-                    <textarea class="ligne-specs" rows="2" placeholder="Détails techniques..."></textarea>
+                    <label>Technical Specifications</label>
+                    <textarea class="ligne-specs" rows="2" placeholder="Technical details..."></textarea>
                 </div>
             `;
             document.getElementById('lignes-list').appendChild(ligneDiv);
@@ -620,10 +636,10 @@
             const form = document.getElementById('bc-form');
             delete form.dataset.mode;
             delete form.dataset.bcId;
-            document.getElementById('submit-btn').textContent = '✅ Créer BC & Lancer l\'approbation';
+            document.getElementById('submit-btn').textContent = '✅ Create PO & Start Approval';
         }
 
-        // Charger les DAs
+        // Load Purchase Requests
         async function loadDemandesAchat() {
             try {
                 const res = await fetch(`${API_URL}/demandes-achat`);
@@ -633,7 +649,7 @@
                 const select = document.getElementById("linked_pr_id");
 
                 tbody.innerHTML = "";
-                select.innerHTML = '<option value="">Sélectionner une DA...</option>';
+                select.innerHTML = '<option value="">Select a PR...</option>';
 
                 das.forEach(da => {
                     const row = `
@@ -645,7 +661,7 @@
                             <td>${da.details}</td>
                             <td>${da.date_creation}</td>
                             <td><span class="status-badge" style="background: ${da.statut === 'Active' ? '#10b981' : '#6b7280'}">${da.statut}</span></td>
-                            <td>${da.statut === 'Active' ? `<button class="btn-create-bc" onclick="preparerBC('${da.id}')">✅ Créer BC</button>` : '-'}</td>
+                            <td>${da.statut === 'Active' ? `<button class="btn-create-bc" onclick="preparerBC('${da.id}')">✅ Create PO</button>` : '-'}</td>
                         </tr>
                     `;
                     tbody.innerHTML += row;
@@ -655,7 +671,7 @@
                     }
                 });
             } catch (error) {
-                console.error('Erreur:', error);
+                console.error('Error:', error);
             }
         }
 
@@ -670,7 +686,7 @@
             document.querySelector('section:nth-child(2)').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Auto-remplir depuis DA
+        // Auto-fill from PR
         document.getElementById('linked_pr_id').addEventListener('change', async function() {
             const daId = this.value;
             if (!daId) return;
@@ -685,14 +701,14 @@
                 document.getElementById('details_demande').value = da.details;
                 document.getElementById('justification').value = da.justification || '';
             } catch (error) {
-                console.error('Erreur:', error);
+                console.error('Error:', error);
             }
         });
 
-        // Modifier BC
+        // Edit PO
         async function modifierBC(bcId) {
             try {
-                showNotification('Chargement du BC...', 'info');
+                showNotification('Loading PO...', 'info');
                 
                 // Fix: Use the correct endpoint structure
                 const res = await fetch(`${API_URL}/bons-commande/${bcId}`);
@@ -704,12 +720,12 @@
                 }
                 
                 const bc = await res.json();
-                console.log('BC loaded:', bc);
+                console.log('PO loaded:', bc);
                 
-                // Fill the form with BC data
+                // Fill the form with PO data
                 document.getElementById('linked_pr_id').value = bc.linked_pr_id || '';
                 
-                // Handle demandeur (can be object or string)
+                // Handle requester (can be object or string)
                 if (bc.demandeur) {
                     document.getElementById('demandeur_nom').value = 
                         typeof bc.demandeur === 'object' ? (bc.demandeur.nom || '') : bc.demandeur;
@@ -727,7 +743,7 @@
                 
                 document.getElementById('type_achat').value = bc.type_achat || 'Produit';
                 
-                // Handle fournisseur
+                // Handle supplier
                 if (bc.fournisseur) {
                     document.getElementById('fournisseur_nom').value = 
                         typeof bc.fournisseur === 'object' ? (bc.fournisseur.nom || '') : bc.fournisseur;
@@ -747,7 +763,7 @@
                 document.getElementById('lignes-list').innerHTML = '';
                 numeroLigne = 0;
                 
-                // Add lines from BC
+                // Add lines from PO
                 if (bc.lignes && bc.lignes.length > 0) {
                     bc.lignes.forEach(ligne => {
                         ajouterLigne();
@@ -755,7 +771,7 @@
                         if (ligneDiv) {
                             ligneDiv.querySelector('.ligne-description').value = ligne.description || '';
                             ligneDiv.querySelector('.ligne-quantite').value = ligne.quantite || 1;
-                            ligneDiv.querySelector('.ligne-unite').value = ligne.unite || 'unité';
+                            ligneDiv.querySelector('.ligne-unite').value = ligne.unite || 'unit';
                             ligneDiv.querySelector('.ligne-prix').value = ligne.prix_unitaire || 0;
                             ligneDiv.querySelector('.ligne-reference').value = ligne.reference_catalogue || '';
                             ligneDiv.querySelector('.ligne-specs').value = ligne.specifications_techniques || '';
@@ -768,26 +784,26 @@
                 
                 calculerTotaux();
                 
-                // Store BC ID for update
+                // Store PO ID for update
                 const form = document.getElementById('bc-form');
                 form.dataset.bcId = bcId;
                 form.dataset.mode = 'update';
-                document.getElementById('submit-btn').textContent = '💾 Mettre à jour le BC';
+                document.getElementById('submit-btn').textContent = '💾 Update PO';
                 
                 // Scroll to form
                 document.querySelector('section:nth-child(2)').scrollIntoView({ behavior: 'smooth' });
                 
-                showNotification('BC chargé - modifiez les données puis cliquez sur "Mettre à jour"', 'success');
+                showNotification('PO loaded - modify the data then click "Update"', 'success');
                 
             } catch (error) {
-                console.error('Erreur complète:', error);
-                showNotification(`Erreur lors du chargement du BC: ${error.message}`, 'error');
+                console.error('Complete error:', error);
+                showNotification(`Error loading PO: ${error.message}`, 'error');
             }
         }
 
-        // Resubmit BC
+        // Resubmit PO
         async function resubmitBC(bcId) {
-            if (!confirm('Resoummettre ce BC pour approbation ?')) return;
+            if (!confirm('Resubmit this PO for approval?')) return;
             
             try {
                 const res = await fetch(`${API_URL}/bons-commande/${bcId}/resubmit`, {
@@ -796,19 +812,19 @@
                 });
                 
                 if (res.ok) {
-                    showNotification(`✅ BC ${bcId} resoumis pour approbation!`, 'success');
+                    showNotification(`✅ PO ${bcId} resubmitted for approval!`, 'success');
                     loadBonsCommande();
                     loadDemandesAchat();
                 } else {
                     const error = await res.json();
-                    showNotification(`Erreur: ${error.detail}`, 'error');
+                    showNotification(`Error: ${error.detail}`, 'error');
                 }
             } catch (error) {
-                showNotification('Erreur de connexion', 'error');
+                showNotification('Connection error', 'error');
             }
         }
 
-        // Soumettre le BC
+        // Submit PO
         document.getElementById('bc-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -829,7 +845,7 @@
             });
 
             if (lignes.length === 0) {
-                showNotification('Ajoutez au moins une ligne de commande', 'error');
+                showNotification('Add at least one order line', 'error');
                 return;
             }
 
@@ -865,7 +881,7 @@
                 const bcId = form.dataset.bcId;
                 
                 if (mode === 'update' && bcId) {
-                    // UPDATE existing BC
+                    // UPDATE existing PO
                     const res = await fetch(`${API_URL}/bons-commande/${bcId}`, {
                         method: 'PUT',
                         headers: {'Content-Type': 'application/json'},
@@ -874,16 +890,16 @@
 
                     if (res.ok) {
                         const data = await res.json();
-                        showNotification(`✅ BC ${bcId} mis à jour! Vous pouvez maintenant le resoummettre.`, 'success');
+                        showNotification(`✅ PO ${bcId} updated! You can now resubmit it.`, 'success');
                         resetForm();
                         loadBonsCommande();
                         loadDemandesAchat();
                     } else {
                         const error = await res.json();
-                        showNotification(`Erreur: ${error.detail}`, 'error');
+                        showNotification(`Error: ${error.detail}`, 'error');
                     }
                 } else {
-                    // CREATE new BC
+                    // CREATE new PO
                     const res = await fetch(`${API_URL}/bons-commande`, {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -892,21 +908,21 @@
 
                     if (res.ok) {
                         const data = await res.json();
-                        showNotification(`✅ BC ${data.purchase_order_id} créé avec ${lignes.length} ligne(s)!`, 'success');
+                        showNotification(`✅ PO ${data.purchase_order_id} created with ${lignes.length} line(s)!`, 'success');
                         resetForm();
                         loadBonsCommande();
                         loadDemandesAchat();
                     } else {
                         const error = await res.json();
-                        showNotification(`Erreur: ${error.detail}`, 'error');
+                        showNotification(`Error: ${error.detail}`, 'error');
                     }
                 }
             } catch (error) {
-                showNotification('Erreur de connexion', 'error');
+                showNotification('Connection error', 'error');
             }
         });
 
-        // Charger les BCs
+        // Load Purchase Orders
         async function loadBonsCommande() {
             try {
                 const res = await fetch(`${API_URL}/bons-commande`);
@@ -916,7 +932,7 @@
                 tbody.innerHTML = "";
 
                 if (bcs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #6b7280;">Aucun bon de commande pour le moment</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #6b7280;">No purchase orders yet</td></tr>';
                     return;
                 }
 
@@ -925,9 +941,9 @@
                         ? `<a href="http://localhost:8001/ui.html?workflow=${bc.workflow_id}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600;">📋 ${bc.workflow_id}</a>`
                         : '<span style="color: #6b7280;">-</span>';
                     
-                    const statusColor = bc.status === 'Approuvé' ? '#10b981' : (bc.status === 'Rejeté' ? '#ef4444' : (bc.status === 'Brouillon' ? '#f59e0b' : '#3b82f6'));
+                    const statusColor = bc.status === 'Approved' ? '#10b981' : (bc.status === 'Rejected' ? '#ef4444' : (bc.status === 'Draft' ? '#f59e0b' : '#3b82f6'));
                     
-                    // Add Modify and Resubmit buttons if BC is in Brouillon and has workflow_id
+                    // Add Modify and Resubmit buttons if PO is in Draft and has workflow_id
                     let actionButtons = workflowLink;
                     if (bc.status === 'Brouillon' && bc.workflow_id) {
                         actionButtons += `
@@ -935,12 +951,12 @@
                             <button onclick="modifierBC('${bc.purchase_order_id}')" 
                                     class="btn-create-bc" 
                                     style="margin-top: 5px; margin-right: 5px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
-                                ✏️ Modifier
+                                ✏️ Edit
                             </button>
                             <button onclick="resubmitBC('${bc.purchase_order_id}')" 
                                     class="btn-create-bc" 
                                     style="margin-top: 5px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                                🔄 Resoummettre
+                                🔄 Resubmit
                             </button>
                         `;
                     }
@@ -959,11 +975,11 @@
                     `;
                 });
 
-                console.log(`✅ Loaded ${bcs.length} bons de commande`);
+                console.log(`✅ Loaded ${bcs.length} purchase orders`);
             } catch (error) {
-                console.error('Erreur:', error);
+                console.error('Error:', error);
                 const tbody = document.querySelector("#bc-table tbody");
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #ef4444;">Erreur de chargement</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #ef4444;">Loading error</td></tr>';
             }
         }
 

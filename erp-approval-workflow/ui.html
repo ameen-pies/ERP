@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Système de Workflow d'Approbation</title>
+    <title>Approval Workflow System</title>
     <style>
         * {
             margin: 0;
@@ -27,7 +27,7 @@
         }
 
         header h1 {
-            color: #2d3748;
+            color: #1E40AF;
             margin-bottom: 0.5rem;
         }
 
@@ -65,10 +65,10 @@
         }
 
         .card h2 {
-            color: #2d3748;
+            color: #1E40AF;
             margin-bottom: 1.5rem;
             font-size: 1.5rem;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid #4169E1;
             padding-bottom: 0.5rem;
         }
 
@@ -80,7 +80,7 @@
         }
 
         .metric-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 10px;
@@ -111,12 +111,11 @@
         }
 
         th {
-            background: #f7fafc;
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
+            color: white;
             padding: 1rem;
             text-align: left;
             font-weight: 600;
-            color: #4a5568;
-            border-bottom: 2px solid #e2e8f0;
         }
 
         td {
@@ -151,9 +150,9 @@
         }
 
         .approval-step.current {
-            border-color: #3b82f6;
+            border-color: #4169E1;
             background: #eff6ff;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
         }
 
         .approval-step.approved {
@@ -188,7 +187,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
             transition: width 0.5s ease;
         }
 
@@ -201,7 +200,7 @@
         }
 
         .comment {
-            border-left: 3px solid #3b82f6;
+            border-left: 3px solid #4169E1;
             padding: 1rem;
             margin-bottom: 1rem;
             background: #f8fafc;
@@ -210,7 +209,7 @@
 
         .comment-author {
             font-weight: bold;
-            color: #1e40af;
+            color: #1E40AF;
             margin-bottom: 0.25rem;
         }
 
@@ -246,7 +245,7 @@
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #4299e1;
+            border-color: #4169E1;
         }
 
         .btn {
@@ -260,13 +259,13 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #4299e1, #3182ce);
+            background: linear-gradient(135deg, #4169E1 0%, #1E40AF 100%);
             color: white;
         }
 
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+            box-shadow: 0 5px 15px rgba(65, 105, 225, 0.4);
         }
 
         .btn-primary:disabled {
@@ -366,7 +365,7 @@
 
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
+            border-top: 4px solid #4169E1;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -402,36 +401,36 @@
 </head>
 <body>
     <header>
-        <h1>🤝 Système de Workflow d'Approbation</h1>
-        <p>Validation multi-niveaux pour documents d'entreprise
-            <span id="connection-status" class="status-indicator status-disconnected">● Déconnecté</span>
+        <h1>🤝 Approval Workflow System</h1>
+        <p>Multi-level validation for business documents
+            <span id="connection-status" class="status-indicator status-disconnected">● Disconnected</span>
         </p>
     </header>
 
     <main>
         <section class="card">
-            <h2>📋 Mes Approbations en Attente</h2>
+            <h2>📋 My Pending Approvals</h2>
             
             <div class="workflow-metrics">
                 <div class="metric-card">
                     <div class="metric-value" id="pending-count">0</div>
-                    <div class="metric-label">En Attente</div>
+                    <div class="metric-label">Pending</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value" id="overdue-count">0</div>
-                    <div class="metric-label">En Retard</div>
+                    <div class="metric-label">Overdue</div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="user-select">Voir en tant qu'utilisateur:</label>
+                <label for="user-select">View as user:</label>
                 <select id="user-select">
-                    <option value="user_1">Frank User (Initiateur)</option>
-                    <option value="tech_lead_1">Alice Tech (Réviseur Technique)</option>
-                    <option value="it_manager_1">Bob IT Manager (Chef de Département)</option>
-                    <option value="finance_1">Charlie Finance (Approbateur Financier)</option>
-                    <option value="purchasing_1">Diana Purchasing (Responsable Achats)</option>
-                    <option value="gm_1">Eve General Manager (Directeur Général)</option>
+                    <option value="user_1">Frank User (Initiator)</option>
+                    <option value="tech_lead_1">Alice Tech (Technical Reviewer)</option>
+                    <option value="it_manager_1">Bob IT Manager (Department Manager)</option>
+                    <option value="finance_1">Charlie Finance (Financial Approver)</option>
+                    <option value="purchasing_1">Diana Purchasing (Purchasing Manager)</option>
+                    <option value="gm_1">Eve General Manager (General Manager)</option>
                 </select>
             </div>
             
@@ -439,19 +438,19 @@
                 <table id="pending-approvals-table">
                     <thead>
                         <tr>
-                            <th>ID Workflow</th>
+                            <th>Workflow ID</th>
                             <th>Document</th>
-                            <th>Initiateur</th>
-                            <th>Département</th>
-                            <th>Montant</th>
-                            <th>Étape Actuelle</th>
-                            <th>Échéance</th>
+                            <th>Initiator</th>
+                            <th>Department</th>
+                            <th>Amount</th>
+                            <th>Current Step</th>
+                            <th>Deadline</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="8" class="empty-state">Chargement...</td>
+                            <td colspan="8" class="empty-state">Loading...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -459,13 +458,13 @@
         </section>
 
         <section class="card" id="workflow-detail" style="display: none;">
-            <h2>🔍 Détails du Workflow: <span id="workflow-title"></span></h2>
+            <h2>🔍 Workflow Details: <span id="workflow-title"></span></h2>
             
             <div class="workflow-container">
                 <div>
                     <div class="progress-info">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span><strong>Progression Globale</strong></span>
+                            <span><strong>Overall Progress</strong></span>
                             <span id="progress-percentage">0%</span>
                         </div>
                         <div class="progress-bar">
@@ -476,7 +475,7 @@
                     <div class="approval-steps" id="approval-steps"></div>
                     
                     <div class="action-form" id="action-form" style="display: none;">
-                        <h3>📝 Prendre une Action</h3>
+                        <h3>📝 Take Action</h3>
                         <form id="workflow-action-form">
                             <input type="hidden" id="current-workflow-id">
                             <input type="hidden" id="current-step-id">
@@ -484,29 +483,29 @@
                             <div class="form-group">
                                 <label for="action-select">Action *</label>
                                 <select id="action-select" required>
-                                    <option value="">Sélectionner une action...</option>
-                                    <option value="approve">✅ Approuver</option>
-                                    <option value="reject">❌ Rejeter</option>
-                                    <option value="request_changes">✏️ Demander des Modifications</option>
-                                    <option value="delegate">🔄 Déléguer</option>
+                                    <option value="">Select an action...</option>
+                                    <option value="approve">✅ Approve</option>
+                                    <option value="reject">❌ Reject</option>
+                                    <option value="request_changes">✏️ Request Changes</option>
+                                    <option value="delegate">🔄 Delegate</option>
                                 </select>
                             </div>
                             
                             <div class="form-group" id="delegate-section" style="display: none;">
-                                <label for="delegate-to">Déléguer à</label>
+                                <label for="delegate-to">Delegate to</label>
                                 <select id="delegate-to">
-                                    <option value="">Sélectionner un utilisateur...</option>
+                                    <option value="">Select a user...</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="action-comments">Commentaires</label>
-                                <textarea id="action-comments" rows="4" placeholder="Ajoutez vos commentaires..."></textarea>
+                                <label for="action-comments">Comments</label>
+                                <textarea id="action-comments" rows="4" placeholder="Add your comments..."></textarea>
                             </div>
                             
                             <div style="display: flex; gap: 1rem;">
-                                <button type="submit" class="btn btn-primary" id="submit-action-btn">💾 Soumettre</button>
-                                <button type="button" class="btn btn-secondary" onclick="hideActionForm()">Annuler</button>
+                                <button type="submit" class="btn btn-primary" id="submit-action-btn">💾 Submit</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideActionForm()">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -517,10 +516,10 @@
                     <div id="comments-thread" style="margin-bottom: 1rem;"></div>
                     
                     <div class="form-group">
-                        <label for="new-comment">Ajouter un Commentaire</label>
-                        <textarea id="new-comment" rows="3" placeholder="Votre message..."></textarea>
+                        <label for="new-comment">Add a Comment</label>
+                        <textarea id="new-comment" rows="3" placeholder="Your message..."></textarea>
                         <button onclick="addComment()" class="btn btn-primary btn-small" id="add-comment-btn" style="margin-top: 0.5rem; width: 100%;">
-                            💬 Envoyer
+                            💬 Send
                         </button>
                     </div>
                 </div>
@@ -567,7 +566,7 @@
             notification.addEventListener('click', () => notification.remove());
         }
 
-        function showLoading(message = 'Traitement en cours...') {
+        function showLoading(message = 'Processing...') {
             const overlay = document.createElement('div');
             overlay.id = 'loading-overlay';
             overlay.className = 'loading-overlay';
@@ -602,7 +601,7 @@
                 
                 return await response.json();
             } catch (error) {
-                console.error('Erreur fetch:', error);
+                console.error('Fetch error:', error);
                 throw error;
             }
         }
@@ -616,24 +615,24 @@
                 ws = new WebSocket('ws://localhost:8001/ws');
                 
                 ws.onopen = () => {
-                    console.log('✅ WebSocket connecté');
+                    console.log('✅ WebSocket connected');
                     reconnectAttempts = 0;
-                    document.getElementById('connection-status').textContent = '● Connecté';
+                    document.getElementById('connection-status').textContent = '● Connected';
                     document.getElementById('connection-status').className = 'status-indicator status-connected';
                 };
                 
                 ws.onmessage = (event) => {
                     try {
                         const message = JSON.parse(event.data);
-                        console.log('📨 Reçu:', message);
+                        console.log('📨 Received:', message);
                         
                         switch(message.type) {
                             case 'workflow_created':
-                                showNotification('Nouveau workflow créé!', 'info');
+                                showNotification('New workflow created!', 'info');
                                 loadPendingApprovals();
                                 break;
                             case 'workflow_updated':
-                                showNotification('Workflow mis à jour', 'info');
+                                showNotification('Workflow updated', 'info');
                                 loadPendingApprovals();
                                 if (currentWorkflowId === message.data.workflow_id) {
                                     viewWorkflowDetail(currentWorkflowId);
@@ -646,28 +645,28 @@
                                 break;
                         }
                     } catch (error) {
-                        console.error('Erreur analyse message WebSocket:', error);
+                        console.error('Error parsing WebSocket message:', error);
                     }
                 };
                 
                 ws.onclose = () => {
-                    console.log('❌ WebSocket déconnecté');
-                    document.getElementById('connection-status').textContent = '● Déconnecté';
+                    console.log('❌ WebSocket disconnected');
+                    document.getElementById('connection-status').textContent = '● Disconnected';
                     document.getElementById('connection-status').className = 'status-indicator status-disconnected';
                     
                     if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
                         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 10000);
                         reconnectAttempts++;
-                        console.log(`🔄 Reconnexion dans ${delay}ms (tentative ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+                        console.log(`🔄 Reconnecting in ${delay}ms (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
                         setTimeout(connectWebSocket, delay);
                     }
                 };
 
                 ws.onerror = (error) => {
-                    console.error('Erreur WebSocket:', error);
+                    console.error('WebSocket error:', error);
                 };
             } catch (error) {
-                console.error('Échec connexion WebSocket:', error);
+                console.error('WebSocket connection failed:', error);
             }
         }
 
@@ -676,7 +675,7 @@
             const workflowId = urlParams.get('workflow');
             
             if (workflowId) {
-                console.log('Chargement workflow depuis URL:', workflowId);
+                console.log('Loading workflow from URL:', workflowId);
                 setTimeout(() => viewWorkflowDetail(workflowId), 500);
             }
         }
@@ -684,7 +683,7 @@
         document.getElementById('user-select').addEventListener('change', function() {
             CURRENT_USER_ID = this.value;
             loadPendingApprovals();
-            showNotification('Contexte utilisateur changé', 'info');
+            showNotification('User context changed', 'info');
         });
 
         document.getElementById('action-select').addEventListener('change', function() {
@@ -719,11 +718,11 @@
                         const deadlineColor = deadline < today ? '#ef4444' : '#6b7280';
                         
                         const roleTranslations = {
-                            'technical_reviewer': 'Réviseur Technique',
-                            'department_manager': 'Chef de Département',
-                            'financial_approver': 'Approbateur Financier',
-                            'purchasing_manager': 'Responsable Achats',
-                            'general_manager': 'Directeur Général'
+                            'technical_reviewer': 'Technical Reviewer',
+                            'department_manager': 'Department Manager',
+                            'financial_approver': 'Financial Approver',
+                            'purchasing_manager': 'Purchasing Manager',
+                            'general_manager': 'General Manager'
                         };
 
                         tbody.innerHTML += `
@@ -735,11 +734,11 @@
                                 <td>${workflow.total_amount ? workflow.total_amount.toFixed(2) + ' TND' : 'N/A'}</td>
                                 <td>${roleTranslations[currentStep.role] || currentStep.role}</td>
                                 <td style="color: ${deadlineColor}">
-                                    ${deadline.toLocaleDateString('fr-FR')}
+                                    ${deadline.toLocaleDateString('en-US')}
                                 </td>
                                 <td>
                                     <button onclick="viewWorkflowDetail('${workflow.workflow_id}')" class="btn btn-primary btn-small">
-                                        👁️ Voir
+                                        👁️ View
                                     </button>
                                 </td>
                             </tr>
@@ -754,20 +753,20 @@
                     tbody.innerHTML = `
                         <tr>
                             <td colspan="8" class="empty-state">
-                                🎉 Aucune approbation en attente! Vous êtes à jour.
+                                🎉 No pending approvals! You're all caught up.
                             </td>
                         </tr>
                     `;
                 }
             } catch (error) {
-                console.error("Erreur chargement approbations:", error);
-                showNotification(`Erreur chargement: ${error.message}`, "error");
+                console.error("Error loading approvals:", error);
+                showNotification(`Loading error: ${error.message}`, "error");
             }
         }
 
         async function viewWorkflowDetail(workflowId) {
             try {
-                showLoading('Chargement du workflow...');
+                showLoading('Loading workflow...');
                 
                 const workflow = await fetchWithErrorHandling(`${API_URL}/workflows/${workflowId}`);
 
@@ -782,7 +781,7 @@
                     document.getElementById('progress-fill').style.width = 
                         `${progress.progress_percentage}%`;
                 } catch (progressError) {
-                    console.warn('Impossible de charger la progression:', progressError);
+                    console.warn('Unable to load progress:', progressError);
                 }
 
                 renderApprovalSteps(workflow);
@@ -794,8 +793,8 @@
                 hideLoading();
             } catch (error) {
                 hideLoading();
-                console.error("Erreur chargement workflow:", error);
-                showNotification(`Erreur chargement workflow: ${error.message}`, "error");
+                console.error("Error loading workflow:", error);
+                showNotification(`Error loading workflow: ${error.message}`, "error");
             }
         }
 
@@ -804,11 +803,11 @@
             container.innerHTML = '';
 
             const roleTranslations = {
-                'technical_reviewer': 'Réviseur Technique',
-                'department_manager': 'Chef de Département',
-                'financial_approver': 'Approbateur Financier',
-                'purchasing_manager': 'Responsable Achats',
-                'general_manager': 'Directeur Général'
+                'technical_reviewer': 'Technical Reviewer',
+                'department_manager': 'Department Manager',
+                'financial_approver': 'Financial Approver',
+                'purchasing_manager': 'Purchasing Manager',
+                'general_manager': 'General Manager'
             };
 
             workflow.steps.forEach((step, index) => {
@@ -825,16 +824,16 @@
                     <div class="step-status" style="background: ${statusColor}">
                         ${statusText}
                     </div>
-                    <h4>Étape ${index + 1}: ${roleTranslations[step.role] || step.role}</h4>
-                    <p><strong>Assigné à:</strong> ${step.assigned_name}</p>
-                    ${step.deadline ? `<p><strong>Échéance:</strong> ${new Date(step.deadline).toLocaleDateString('fr-FR')}</p>` : ''}
-                    ${step.comments ? `<p><strong>Commentaires:</strong> ${step.comments}</p>` : ''}
-                    ${step.action_date ? `<p><strong>Action effectuée:</strong> ${new Date(step.action_date).toLocaleString('fr-FR')}</p>` : ''}
+                    <h4>Step ${index + 1}: ${roleTranslations[step.role] || step.role}</h4>
+                    <p><strong>Assigned to:</strong> ${step.assigned_name}</p>
+                    ${step.deadline ? `<p><strong>Deadline:</strong> ${new Date(step.deadline).toLocaleDateString('en-US')}</p>` : ''}
+                    ${step.comments ? `<p><strong>Comments:</strong> ${step.comments}</p>` : ''}
+                    ${step.action_date ? `<p><strong>Action taken:</strong> ${new Date(step.action_date).toLocaleString('en-US')}</p>` : ''}
                     
                     ${isAssignedToMe ? `
                         <button onclick="showActionForm('${workflow.workflow_id}', '${step.step_id}')" 
                                 class="btn btn-primary btn-small" style="margin-top: 1rem;">
-                            📝 Prendre Action
+                            📝 Take Action
                         </button>
                     ` : ''}
                 `;
@@ -851,11 +850,11 @@
 
         function getStatusText(status) {
             const statusMap = {
-                'pending': 'En Attente',
-                'in_progress': 'En Cours',
-                'approved': 'Approuvé',
-                'rejected': 'Rejeté',
-                'changes_requested': 'Modifications Demandées'
+                'pending': 'Pending',
+                'in_progress': 'In Progress',
+                'approved': 'Approved',
+                'rejected': 'Rejected',
+                'changes_requested': 'Changes Requested'
             };
             return statusMap[status] || status;
         }
@@ -863,7 +862,7 @@
         function getStatusColor(status) {
             const colorMap = {
                 'pending': '#6b7280',
-                'in_progress': '#3b82f6',
+                'in_progress': '#4169E1',
                 'approved': '#10b981',
                 'rejected': '#ef4444',
                 'changes_requested': '#f59e0b'
@@ -893,12 +892,12 @@
             const delegateTo = document.getElementById('delegate-to').value;
             
             if (!action) {
-                showNotification('Veuillez sélectionner une action', 'warning');
+                showNotification('Please select an action', 'warning');
                 return;
             }
             
             try {
-                showLoading('Traitement de votre action...');
+                showLoading('Processing your action...');
                 
                 const payload = {
                     workflow_id: workflowId,
@@ -918,14 +917,14 @@
                 });
                 
                 hideLoading();
-                showNotification('Action effectuée avec succès!', 'success');
+                showNotification('Action completed successfully!', 'success');
                 hideActionForm();
                 await loadPendingApprovals();
                 await viewWorkflowDetail(workflowId);
                 
             } catch (error) {
                 hideLoading();
-                showNotification(`Erreur: ${error.message}`, 'error');
+                showNotification(`Error: ${error.message}`, 'error');
             }
         });
 
@@ -935,39 +934,38 @@
                 const container = document.getElementById('comments-thread');
                 
                 if (comments.length === 0) {
-                    container.innerHTML = '<p style="color: #6b7280; text-align: center;">Aucun commentaire pour le moment</p>';
+                    container.innerHTML = '<p style="color: #6b7280; text-align: center;">No comments yet</p>';
                     return;
                 }
                 
                 container.innerHTML = comments.map(comment => `
                     <div class="comment">
                         <div class="comment-author">${comment.author_name}</div>
-                        <div class="comment-time">${new Date(comment.timestamp).toLocaleString('fr-FR')}</div>
+                        <div class="comment-time">${new Date(comment.timestamp).toLocaleString('en-US')}</div>
                         <div>${comment.message}</div>
                     </div>
                 `).join('');
                 
             } catch (error) {
-                console.error('Erreur chargement commentaires:', error);
+                console.error('Error loading comments:', error);
             }
         }
 
         async function addComment() {
             const message = document.getElementById('new-comment').value.trim();
             if (!message) {
-                showNotification('Veuillez entrer un commentaire', 'warning');
+                showNotification('Please enter a comment', 'warning');
                 return;
             }
             
             if (!currentWorkflowId) {
-                showNotification('Aucun workflow sélectionné', 'error');
+                showNotification('No workflow selected', 'error');
                 return;
             }
             
             try {
-                // Get user info from API
                 const users = await fetchWithErrorHandling(`${API_URL}/users`);
-                const userName = users[CURRENT_USER_ID]?.name || 'Utilisateur Inconnu';
+                const userName = users[CURRENT_USER_ID]?.name || 'Unknown User';
                 
                 await fetchWithErrorHandling(`${API_URL}/workflows/${currentWorkflowId}/comments`, {
                     method: 'POST',
@@ -981,11 +979,11 @@
                 });
                 
                 document.getElementById('new-comment').value = '';
-                showNotification('Commentaire ajouté', 'success');
+                showNotification('Comment added', 'success');
                 await loadComments(currentWorkflowId);
                 
             } catch (error) {
-                showNotification(`Erreur: ${error.message}`, 'error');
+                showNotification(`Error: ${error.message}`, 'error');
             }
         }
 
@@ -993,7 +991,7 @@
             try {
                 const users = await fetchWithErrorHandling(`${API_URL}/users`);
                 const select = document.getElementById('delegate-to');
-                select.innerHTML = '<option value="">Sélectionner un utilisateur...</option>';
+                select.innerHTML = '<option value="">Select a user...</option>';
                 
                 for (const [userId, userData] of Object.entries(users)) {
                     if (userId !== CURRENT_USER_ID) {
@@ -1001,12 +999,12 @@
                     }
                 }
             } catch (error) {
-                console.error('Erreur chargement utilisateurs:', error);
+                console.error('Error loading users:', error);
             }
         }
 
         window.addEventListener('load', function() {
-            console.log('🚀 Application chargée');
+            console.log('🚀 Application loaded');
             connectWebSocket();
             loadPendingApprovals();
             loadDelegateUsers();

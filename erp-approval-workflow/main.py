@@ -50,7 +50,7 @@ app.add_middleware(
 )
 
 MONGODB_URL = os.getenv("MONGODB_URL")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "ERP")
+DATABASE_NAME = os.getenv("MONGO_DB_NAME", "ERP")
 
 if not MONGODB_URL:
     raise Exception("❌ MONGODB_URL not found in .env file")
