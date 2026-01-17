@@ -11,8 +11,7 @@ load_dotenv()
 
 # MongoDB connection URI
 MONGO_URI = os.getenv(
-    "MONGO_URI",
-    "mongodb+srv://medhelaliamin125_db_user:aUfXpfkyHbpynyKL@erp.yrgvgdj.mongodb.net/?retryWrites=true&w=majority"
+    "MONGO_URI"
 )
 
 # Database name
